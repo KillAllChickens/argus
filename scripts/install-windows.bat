@@ -58,7 +58,7 @@ if %errorlevel% neq 0 (
 echo.
 echo [✔] Installation complete!
 echo.
-echo You can now run '%APP_NAME% configure' or '%APP_NAME% c'.
+echo You can now run '%APP_NAME% config' or '%APP_NAME% c'.
 echo (You might need to open a new terminal for the PATH change to take effect).
 echo.
 
