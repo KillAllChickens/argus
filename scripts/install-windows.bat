@@ -53,24 +53,45 @@ if exist ".\config" (
     echo [!] No 'config' directory found to copy. Skipping.
 )
 
-echo [*] Checking if the installation directory is in your PATH...
-echo %PATH% | find /I "%INSTALL_DIR%" >nul
-if %errorlevel% neq 0 (
+echo [*] Checking if the installation directory is in your user PATH...
+
+set "KEY_NAME=HKEY_CURRENT_USER\Environment"
+set "VALUE_NAME=Path"
+set "NEEDS_PATH_UPDATE=true"
+
+for /f "tokens=2,*" %%a in ('reg query "%KEY_NAME%" /v "%VALUE_NAME%" 2^>nul') do (
+    echo "%%b" | find /I "%INSTALL_DIR%" >nul
+    if %errorlevel% equ 0 (
+        set "NEEDS_PATH_UPDATE="
+    )
+)
+
+if defined NEEDS_PATH_UPDATE (
     echo.
-    echo [!] WARNING: %INSTALL_DIR% is not in your PATH.
-    echo     To run '%APP_NAME%' from anywhere, you need to add it to your system's PATH.
+    echo [!] WARNING: %INSTALL_DIR% is not in your user PATH.
+    echo     To run '%APP_NAME%' from anywhere, you need to add it.
     echo.
     set /p "do_setx=Would you like to add it to your user PATH now? (y/n): "
     if /I "%do_setx%" == "y" (
-        echo [*] Adding to PATH using setx. This will affect new terminals.
-        setx PATH "%INSTALL_DIR%;%PATH%"
+        echo [*] Adding to user PATH. This will affect new terminals.
+
+        for /f "tokens=2,*" %%a in ('reg query "%KEY_NAME%" /v "%VALUE_NAME%" 2^>nul') do (
+            set "CURRENT_USER_PATH=%%b"
+        )
+
+        if defined CURRENT_USER_PATH (
+            reg add "%KEY_NAME%" /v "%VALUE_NAME%" /t REG_EXPAND_SZ /d "%INSTALL_DIR%;%CURRENT_USER_PATH%" /f >nul
+        ) else (
+            reg add "%KEY_NAME%" /v "%VALUE_NAME%" /t REG_EXPAND_SZ /d "%INSTALL_DIR%" /f >nul
+        )
+
         echo [✔] PATH updated. Please open a new Command Prompt or PowerShell to use the command.
     ) else (
         echo [*] OK. You can add it manually later if you wish.
     )
 ) else (
     echo.
-    echo [✔] Installation directory is already in your PATH.
+    echo [✔] Installation directory is already in your user PATH.
 )
 
 echo.
