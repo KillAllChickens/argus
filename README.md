@@ -1,6 +1,6 @@
-# Argus Panoptes
-
 <div align="center">
+
+# Argus Panoptes
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL_v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)&nbsp;
 [![Go Report Card](https://goreportcard.com/badge/github.com/KillAllChickens/argus)](https://goreportcard.com/report/github.com/KillAllChickens/argus)&nbsp;
