@@ -1,8 +1,13 @@
 # Argus Panoptes
 
+<div align="center">
+
 [![License: GPL v3](https://img.shields.io/badge/License-GPL_v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Go Report Card](https://goreportcard.com/badge/github.com/KillAllChickens/argus)](https://goreportcard.com/report/github.com/KillAllChickens/argus)
 ![GitHub stars](https://img.shields.io/github/stars/KillAllChickens/argus?style=social)![GitHub forks](https://img.shields.io/github/forks/KillAllChickens/argus?style=social)
+
+</div>
+
 
 > _"The all-seeing one."_
 
