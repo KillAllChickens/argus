@@ -6,7 +6,7 @@ set "CONFIG_DIR=%APPDATA%\%APP_NAME%"
 
 echo [*] Building %APP_NAME% for Windows...
 
-:: Setting up environment for Go build
+
 set "GOOS=windows"
 if /I "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
     set "GOARCH=amd64"
@@ -19,7 +19,7 @@ if /I "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
 
 echo [*] Target: %GOOS%/%GOARCH%
 
-:: Building the Go executable
+
 go install .
 if %errorlevel% neq 0 (
     echo [!] Build failed. Check the errors above.
@@ -46,7 +46,7 @@ set "GOBIN=%USERPROFILE%\go\bin"
 echo.
 echo [*] Your binary is located at: %GOBIN%\%APP_NAME%.exe
 
-:: Check if GOBIN is in PATH
+
 echo %PATH% | find /I "%GOBIN%" >nul
 if %errorlevel% neq 0 (
     echo [!] %GOBIN% is not in your PATH.
