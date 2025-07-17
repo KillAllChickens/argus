@@ -1,0 +1,39 @@
+# This file contains a list of things to check for on the found page
+# If ANY of these are detected on the page, that page is immediately considered "Not Found"
+# Seperated by newlines, empty lines are ignored, and # are comments
+
+<title> GIFs - Find &amp; Share on GIPHY</title>
+
+nobody on Reddit goes by that name
+
+The search engine encountered an error
+
+could not fetch an account with user item identifier
+
+The resource could not be found
+
+Internet Archive services are temporarily offline
+
+The specified profile could not be found
+
+If you have <strong>Telegram</strong>, you can contact <a class="tgme_username_link"
+
+{"success":false} # tryhackme
+
+<title>Threads</title>
+
+This channel is currently unavailable # twitch
+
+No group could be retrieved for the given URL # steamcommunity.com/groups
+
+{U}.wordpress.com doesn't exist # Wordpress
+
+<title>Throne | The Wishlist for Creators | Throne Gifts</title>
+
+{"users":[]} # Duolingo
+
+<title>Bitchute</title> # bitchute.com
+
+<title>HTTP 404: Page Not Found # hackerRank.com
+
+We could not find the page you were looking for

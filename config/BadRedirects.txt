@@ -1,0 +1,11 @@
+# This file contains a list of URLs to check for on a redirect
+# If the request is redirected to a URL that contains one of these strings
+# The request will be aborted and that site will be considered "Not found"
+# Seperated by newlines, empty lines are ignored, and # are comments
+
+https://psnprofiles.com?psnId=
+
+wordpress.com/typo/?subdomain=
+
+
+#SP:cracked.com
