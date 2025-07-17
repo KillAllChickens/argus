@@ -71,7 +71,7 @@ https://dribbble.com/{U}
 https://www.etsy.com/people/{U}
 https://genius.com/{U}
 https://giphy.com/{U}
-https://gist.github.com/{U}
+#https://gist.github.com/{U}
 https://en.gravatar.com/{U}
 https://hubpages.com/@{U}
 https://{U}.itch.io
