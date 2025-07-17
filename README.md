@@ -99,7 +99,7 @@ argus c
     ```
 
 *   **Scan usernames from a file:**
-    Use a `.txt` file with one username per line. For more details, see the [Usernames](#usernames) section.
+    Use a `.txt` file with one username per line. For more details, see the [Usernames](#-usernames) section.
     ```bash
     argus scan -u <filename.txt>
     ```
