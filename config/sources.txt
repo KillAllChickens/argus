@@ -170,3 +170,4 @@ https://{U}.wordpress.com
 https://anilist.co/user/{U}/
 https://retroachievements.org/user/{U}
 https://www.hackthebox.com/profile/{U}
+https://ultimate-guitar.com/u/{U}
