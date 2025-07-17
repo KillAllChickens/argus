@@ -6,7 +6,7 @@
 
 > *"The all-seeing one."*
 
-Named after the hundred-eyed giant of Greek mythology, Argus Panoptes is a powerful OSINT (Open Source Intelligence) tool designed to uncover the digital footprint of a specific username. Just as his mythological namesake served as a vigilant watchman, this tool meticulously scans the web to identify websites where a target username is registered.
+Named after the hundred-eyed giant of Greek mythology, Argus Panoptes is a powerful OSINT (Open Source Intelligence) tool designed to uncover the digital footprint of a specific username. Just as his mythological namesake served as a vigilant watchman, this tool scans the web to identify websites where a target username is registered.
 
 For better accuracy, Argus Panoptes can use Google Gemini to filter out false positives, making results as precise as possible.
 
