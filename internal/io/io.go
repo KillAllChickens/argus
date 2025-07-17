@@ -53,7 +53,7 @@ func ensureDefaultConfigExists(configDir string) {
 		helpers.HandleErr(err)
 	}
 
-	fileExists, err := helpers.PathExists(filepath.Join(configDir, "config.json"))
+	fileExists, _ := helpers.PathExists(filepath.Join(configDir, "config.json"))
 	if !fileExists {
 		err = CopyMissingConfigDir("./config", configDir)
 		helpers.HandleErr(err)

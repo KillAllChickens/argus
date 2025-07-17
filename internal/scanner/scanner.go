@@ -138,14 +138,14 @@ func StartScan(usernames []string) {
 func init404Checks() {
 	checkfilepath, err := io.GetFilePath("404checks.txt")
 	helpers.HandleErr(err)
-	checks, err := io.NewlineSeperatedFileToArray(checkfilepath)
+	checks, _ := io.NewlineSeperatedFileToArray(checkfilepath)
 	soft404Fingerprints = append(soft404Fingerprints, checks...)
 }
 
 func initBadRedirects() {
 	checkfilepath, err := io.GetFilePath("BadRedirects.txt")
 	helpers.HandleErr(err)
-	fileContent, err := io.NewlineSeperatedFileToArray(checkfilepath)
+	fileContent, _ := io.NewlineSeperatedFileToArray(checkfilepath)
 	badRedirects = fileContent
 }
 
