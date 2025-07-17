@@ -1,6 +1,8 @@
 package scanner
 
 import (
+	"crypto/rand"
+	"fmt"
 	"github.com/KillAllChickens/argus/internal/ai"
 	"github.com/KillAllChickens/argus/internal/colors"
 	"github.com/KillAllChickens/argus/internal/helpers"
@@ -9,8 +11,6 @@ import (
 	"github.com/KillAllChickens/argus/internal/printer"
 	"github.com/KillAllChickens/argus/internal/shared"
 	"github.com/KillAllChickens/argus/internal/vars"
-	"crypto/rand"
-	"fmt"
 	"math/big"
 	"net/http"
 	"net/url"

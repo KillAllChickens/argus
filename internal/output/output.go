@@ -1,12 +1,12 @@
 package output
 
 import (
-	"github.com/KillAllChickens/argus/internal/helpers"
-	"github.com/KillAllChickens/argus/internal/io"
-	"github.com/KillAllChickens/argus/internal/vars"
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/KillAllChickens/argus/internal/helpers"
+	"github.com/KillAllChickens/argus/internal/io"
+	"github.com/KillAllChickens/argus/internal/vars"
 	"html/template"
 	"os"
 	"path/filepath"

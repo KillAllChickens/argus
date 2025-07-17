@@ -1,11 +1,11 @@
 package config
 
 import (
+	"bufio"
+	"fmt"
 	"github.com/KillAllChickens/argus/internal/colors"
 	"github.com/KillAllChickens/argus/internal/helpers"
 	"github.com/KillAllChickens/argus/internal/vars"
-	"bufio"
-	"fmt"
 	"os"
 	"strings"
 

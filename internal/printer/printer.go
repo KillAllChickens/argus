@@ -1,9 +1,9 @@
 package printer
 
 import (
+	"fmt"
 	"github.com/KillAllChickens/argus/internal/colors"
 	"github.com/KillAllChickens/argus/internal/shared"
-	"fmt"
 	"math/rand"
 	"strings"
 
