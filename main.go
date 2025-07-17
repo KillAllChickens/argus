@@ -73,13 +73,13 @@ func main() {
 				Flags: []cli.Flag{
 					&cli.IntFlag{
 						Name:    "threads",
-						Usage:   "Ammount of concurrent requests",
+						Usage:   "Amount of concurrent requests",
 						Aliases: []string{"t"},
 						Value:   25,
 					},
 					&cli.BoolFlag{
 						Name:  "ai",
-						Usage: "Will slow everything down, but will include full summaries of the user, ai-only extracted information, and will remove all false positives.",
+						Usage: "Use AI to eliminate false positives. (Increases scan time)",
 					},
 					&cli.StringFlag{
 						Name:        "username-list",
