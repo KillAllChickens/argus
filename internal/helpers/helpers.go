@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"argus/internal/colors"
-	"argus/internal/printer"
-	"argus/internal/vars"
+	"github.com/KillAllChickens/argus/internal/colors"
+	"github.com/KillAllChickens/argus/internal/printer"
+	"github.com/KillAllChickens/argus/internal/vars"
 )
 
 func HandleErr(err error) {

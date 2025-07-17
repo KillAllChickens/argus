@@ -1,4 +1,4 @@
-module argus
+module github.com/KillAllChickens/argus
 
 go 1.24
 

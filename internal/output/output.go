@@ -1,9 +1,9 @@
 package output
 
 import (
-	"argus/internal/helpers"
-	"argus/internal/io"
-	"argus/internal/vars"
+	"github.com/KillAllChickens/argus/internal/helpers"
+	"github.com/KillAllChickens/argus/internal/io"
+	"github.com/KillAllChickens/argus/internal/vars"
 	"bytes"
 	"encoding/json"
 	"fmt"

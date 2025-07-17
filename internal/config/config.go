@@ -1,15 +1,15 @@
 package config
 
 import (
-	"argus/internal/colors"
-	"argus/internal/helpers"
-	"argus/internal/vars"
+	"github.com/KillAllChickens/argus/internal/colors"
+	"github.com/KillAllChickens/argus/internal/helpers"
+	"github.com/KillAllChickens/argus/internal/vars"
 	"bufio"
 	"fmt"
 	"os"
 	"strings"
 
-	"argus/internal/io"
+	"github.com/KillAllChickens/argus/internal/io"
 )
 
 func RunConfig() {

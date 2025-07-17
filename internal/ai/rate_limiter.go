@@ -1,9 +1,9 @@
 package ai
 
 import (
-	"argus/internal/helpers"
-	"argus/internal/shared"
-	"argus/internal/vars"
+	"github.com/KillAllChickens/argus/internal/helpers"
+	"github.com/KillAllChickens/argus/internal/shared"
+	"github.com/KillAllChickens/argus/internal/vars"
 
 	"sync"
 	"time"

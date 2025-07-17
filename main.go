@@ -7,12 +7,12 @@ import (
 
 	"github.com/urfave/cli/v3"
 
-	"argus/internal/config"
-	"argus/internal/helpers"
-	"argus/internal/io"
-	"argus/internal/printer"
-	"argus/internal/scanner"
-	"argus/internal/vars"
+	"github.com/KillAllChickens/argus/internal/config"
+	"github.com/KillAllChickens/argus/internal/helpers"
+	"github.com/KillAllChickens/argus/internal/io"
+	"github.com/KillAllChickens/argus/internal/printer"
+	"github.com/KillAllChickens/argus/internal/scanner"
+	"github.com/KillAllChickens/argus/internal/vars"
 )
 
 var usernames []string

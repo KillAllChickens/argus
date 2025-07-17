@@ -1,14 +1,14 @@
 package scanner
 
 import (
-	"argus/internal/ai"
-	"argus/internal/colors"
-	"argus/internal/helpers"
-	"argus/internal/io"
-	"argus/internal/output"
-	"argus/internal/printer"
-	"argus/internal/shared"
-	"argus/internal/vars"
+	"github.com/KillAllChickens/argus/internal/ai"
+	"github.com/KillAllChickens/argus/internal/colors"
+	"github.com/KillAllChickens/argus/internal/helpers"
+	"github.com/KillAllChickens/argus/internal/io"
+	"github.com/KillAllChickens/argus/internal/output"
+	"github.com/KillAllChickens/argus/internal/printer"
+	"github.com/KillAllChickens/argus/internal/shared"
+	"github.com/KillAllChickens/argus/internal/vars"
 	"crypto/rand"
 	"fmt"
 	"math/big"

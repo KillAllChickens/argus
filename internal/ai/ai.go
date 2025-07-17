@@ -5,10 +5,10 @@ import (
 	"strings"
 	"time"
 
-	"argus/internal/helpers" // Assuming these are your local packages
-	"argus/internal/printer"
-	"argus/internal/shared"
-	"argus/internal/vars"
+	"github.com/KillAllChickens/argus/internal/helpers" // Assuming these are your local packages
+	"github.com/KillAllChickens/argus/internal/printer"
+	"github.com/KillAllChickens/argus/internal/shared"
+	"github.com/KillAllChickens/argus/internal/vars"
 
 	// Correct import for APIKey
 	"google.golang.org/genai"
@@ -86,8 +86,8 @@ func AIResponse(system_prompt string, prompt string) string {
 // import (
 // 	"context"
 
-// 	"argus/internal/helpers"
-// 	"argus/internal/vars"
+// 	"github.com/KillAllChickens/argus/internal/helpers"
+// 	"github.com/KillAllChickens/argus/internal/vars"
 
 // 	"google.golang.org/genai"
 // )
