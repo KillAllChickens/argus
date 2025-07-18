@@ -138,7 +138,7 @@ func saveResultFile(filetype string, username string, data string) {
 	f, err := os.Create(FilePath)
 	helpers.HandleErr(err)
 
-	defer func(){_ = f.Close()}()
+	defer func() { _ = f.Close() }()
 
 	ByteData := []byte(data)
 

@@ -115,8 +115,8 @@ func main() {
 				},
 				Arguments: []cli.Argument{
 					&cli.StringArgs{
-						Name: "usernames",
-						UsageText: "usernames to totally scan",
+						Name:        "usernames",
+						UsageText:   "usernames to totally scan",
 						Destination: &usernames,
 						Max:         -1,
 						Min:         0,
@@ -205,7 +205,7 @@ func main() {
 					return nil
 				},
 			},
-			&cli.Command{
+			{
 				Name: "config-dir",
 				Action: func(ctx context.Context, cmd *cli.Command) error {
 					io.InitPaths(cmd.String("config-path"))

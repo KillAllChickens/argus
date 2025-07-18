@@ -88,7 +88,7 @@ func StartScan(usernames []string) {
 		}
 	}
 
-	defer func(){_ = client.Close()}()
+	defer func() { _ = client.Close() }()
 
 	sources, err := io.GetSources()
 	helpers.HandleErr(err)
@@ -175,7 +175,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 
 	// client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(5))
 	// defer bar.Add(1)
-	defer func(){_ = bar.Add(1)}()
+	defer func() { _ = bar.Add(1) }()
 
 	parts := strings.Split(source, "|")
 	URL := parts[len(parts)-1]
