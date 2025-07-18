@@ -75,6 +75,19 @@ func StartScan(usernames []string) {
 	client := resty.New()
 	client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(20))
 	client.SetTimeout(5 * time.Second)
+
+	if vars.Proxy != "" {
+		proxyTest := testProxy(vars.Proxy)
+		if proxyTest { // Proxy works as expected
+			client.SetProxy(vars.Proxy)
+		} else {
+			if vars.Proxy == "socks5://127.0.0.1:9050" {
+				printer.Info("Do you have the Tor proxy installed and set up?")
+			}
+			os.Exit(1)
+		}
+	}
+
 	defer client.Close()
 
 	sources, err := io.GetSources()
@@ -522,4 +535,35 @@ func flexibleURLContains(fullURL, checkURL string) bool {
 	}
 
 	return strings.Contains(normalizedFull, normalizedCheck)
+}
+
+func testProxy(proxyAddr string) bool {
+	client := resty.New()
+	client.SetProxy(proxyAddr)
+	client.SetTimeout(10 * time.Second)
+
+	client.SetRedirectPolicy(resty.NoRedirectPolicy())
+	resp, err := client.R().Get("http://ipinfo.io/ip")
+
+	if err != nil {
+		if strings.Contains(err.Error(), "proxyconnect") ||
+			strings.Contains(err.Error(), "connection refused") ||
+			strings.Contains(err.Error(), "timeout") {
+			printer.Error("Proxy %s failed to connect or timed out: %v", proxyAddr, err)
+		} else if strings.Contains(err.Error(), "protocol error") {
+			printer.Error("Proxy %s had a protocol error. Is it the correct type (http/socks5)? %v", proxyAddr, err)
+		} else {
+			printer.Error("Failed to use proxy %s for request: %v", proxyAddr, err)
+		}
+		return false
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		if resp.StatusCode() == http.StatusForbidden || resp.StatusCode() == http.StatusProxyAuthRequired {
+			printer.Warning("Proxy %s might require authentication or is blocked.", proxyAddr)
+		}
+		return false
+	}
+
+	return true
 }

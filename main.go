@@ -45,6 +45,7 @@ func main() {
 				Aliases: []string{},
 				Value:   "",
 				Usage:   "The path to a custom config.json, leave blank for default",
+				Hidden:  true,
 			},
 		},
 		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
@@ -95,6 +96,16 @@ func main() {
 						DefaultText: "",
 						Usage:       "The directory to output to, defaults to ./results/. if you don't specify a specific type, it will output all types",
 					},
+
+					&cli.StringFlag{
+						Name:        "proxy",
+						Aliases:     []string{"p"},
+						DefaultText: "",
+						Usage:       "Proxy to use for scanning (e.g., http://proxyserver:8888 or socks5://user:pass@proxyserver:port)",
+					},
+
+					&cli.BoolFlag{Name: "tor", Usage: "Use Tor for scanning"},
+
 					&cli.BoolFlag{Name: "silent", Aliases: []string{"s"}, Usage: "Disable \"Scan Complete\" notifications.", Destination: &vars.Silent},
 					// Output types
 					&cli.BoolFlag{Name: "html", Usage: "Output as HTML"},
@@ -132,6 +143,16 @@ func main() {
 					}
 					if cmd.Bool("text") {
 						vars.OutputTypes = append(vars.OutputTypes, "text")
+					}
+
+					if cmd.String("proxy") != "" && cmd.Bool("tor") {
+						printer.Error("Cannot use --proxy/-p with --tor. Choose one or the other.")
+					}
+
+					vars.Proxy = cmd.String("proxy")
+
+					if cmd.Bool("tor") {
+						vars.Proxy = "socks5://127.0.0.1:9050"
 					}
 
 					vars.Threads = cmd.Int("threads")
