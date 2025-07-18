@@ -9,7 +9,6 @@
 
 </div>
 
-
 > _"The all-seeing one."_
 
 Named after the hundred-eyed giant of Greek mythology, Argus Panoptes is a powerful OSINT (Open Source Intelligence) tool designed to uncover the digital footprint of a specific username. Just as his mythological namesake served as a vigilant watchman, this tool scans the web to identify websites where a target username is registered.
@@ -155,6 +154,8 @@ argus c
      --ai                               Use AI to eliminate false positives. (Increases scan time) (default: false)
      --username-list string, -u string  Get usernames to scan, one per line
      --output string, -o string         The directory to output to, defaults to ./results/. if you don't specify a specific type, it will output all types
+     --proxy string, -p string          Proxy to use for scanning (e.g., http://proxyserver:8888 or socks5://user:pass@proxyserver:port)
+     --tor                              Use Tor for scanning (default: false)
      --silent, -s                       Disable "Scan Complete" notifications. (default: false)
      --html                             Output as HTML (default: false)
      --pdf                              Output as PDF (default: false)
