@@ -34,6 +34,7 @@ jobs:
           # customization
           OCO_AI_PROVIDER: gemini
           OCO_MODEL: "gemini-2.0-flash"
+          OCO_API_URL: https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent
           OCO_TOKENS_MAX_INPUT: 1384
           OCO_TOKENS_MAX_OUTPUT: 500
           OCO_DESCRIPTION: false
