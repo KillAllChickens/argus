@@ -3,7 +3,7 @@
 ![Banner](assets/ArgusBanner.jpg)
 
 [![License: GPL v3](https://img.shields.io/github/license/KillAllChickens/argus)](https://www.gnu.org/licenses/gpl-3.0)&nbsp;
-<!-- [![Go Report Card](https://goreportcard.com/badge/github.com/KillAllChickens/argus)](https://goreportcard.com/report/github.com/KillAllChickens/argus)&nbsp; -->
+[![Go Report Card](https://goreportcard.com/badge/github.com/KillAllChickens/argus)](https://goreportcard.com/report/github.com/KillAllChickens/argus)&nbsp;
 ![GitHub stars](https://img.shields.io/github/stars/KillAllChickens/argus)&nbsp;
 ![GitHub forks](https://img.shields.io/github/forks/KillAllChickens/argus)&nbsp;
 
