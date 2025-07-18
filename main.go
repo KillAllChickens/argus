@@ -149,7 +149,7 @@ func main() {
 						printer.Error("Cannot use --proxy/-p with --tor. Choose one or the other.")
 					}
 
-					vars.Proxy = cmd.String("proxy")m,
+					vars.Proxy = cmd.String("proxy")
 
 					if cmd.Bool("tor") {
 						vars.Proxy = "socks5://127.0.0.1:9050"
