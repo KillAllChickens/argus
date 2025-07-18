@@ -116,7 +116,7 @@ func main() {
 				Arguments: []cli.Argument{
 					&cli.StringArgs{
 						Name: "usernames",
-						// UsageText: "The usernames to scan, seperated by spaces",
+						UsageText: "usernames to totally scan",
 						Destination: &usernames,
 						Max:         -1,
 						Min:         0,
