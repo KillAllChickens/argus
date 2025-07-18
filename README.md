@@ -15,8 +15,25 @@ Named after the hundred-eyed giant of Greek mythology, Argus Panoptes is a power
 
 For better accuracy, Argus Panoptes can use Google Gemini to filter out false positives, making results as precise as possible.
 
-<!-- START doctoc -->
-<!-- END doctoc -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<details>
+<summary>Table of Contents</summary>
+
+  - [✨ Features](#-features)
+  - [🛠️ Installation](#-installation)
+    - [Linux](#linux)
+    - [Windows](#windows)
+  - [Usage](#usage)
+    - [Configuration](#configuration)
+    - [Scanning](#scanning)
+  - [📝 Usernames](#-usernames)
+    - [Command-Line Usernames](#command-line-usernames)
+    - [Username Files](#username-files)
+- [🚧 Planned Features](#-planned-features)
+
+</details>
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ## ✨ Features
 
