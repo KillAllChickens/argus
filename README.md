@@ -135,6 +135,17 @@ argus c
   argus scan <username> --html --pdf --json --txt
   ```
 
+- **Proxy and Tor Support:**
+  You can use proxies or Tor for enhanced anonymity! Simply specify a proxy with the `--proxy` flag, or Tor with `--tor`
+
+  ```bash
+  # Use a standard HTTP/SOCKS5 proxy (e.g., http://proxyserver:8888 or socks5://user:pass@proxyserver:port)
+  argus scan <username> --proxy "http://1.2.3.4:5678"
+
+  # Route all traffic through the Tor network (requires Tor to be installed and running locally on the default port, 9050)
+  argus scan <username> --tor
+  ```
+
 - **Additional Options:**
   For a full list of commands and options, use the help flag:
 
@@ -193,3 +204,9 @@ user1
 user2 # This will also be ignored
 user3
 ```
+
+# 🚧 Planned Features
+We're constantly working to make Argus even more powerful and versatile! Here is a peek into what we have planned for future releases!
+- **Proxy List Support:** Currently, you can use a single proxy. We're planning to add the ability to load a list of proxies and **rotate through them automatically** for enhanced anonymity and resilience against rate limits.
+- **Simple Site List Management:** We want to make it easier to customize the sites Argus scans. This includes commands to **add, remove, and update site configurations** directly, putting more control in your hands.
+- **Deep Scan Mode:** Beyond just finding if a username exists, we aim to add a "deep scan" mode. This feature would attempt to **extract more public information** from found profiles (e.g., linked social media, "about me" sections, public post counts).
