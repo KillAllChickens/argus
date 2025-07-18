@@ -186,7 +186,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 	client.SetRedirectPolicy(resty.RedirectPolicyFunc(func(req *http.Request, via []*http.Request) error {
 		if vars.Verbose {
 			mtx.Lock()
-			bar.Clear()
+			_ := bar.Clear()
 			printer.Error("Redirect: %s -> %s", via[len(via)-1].URL.String(), req.URL.String())
 			mtx.Unlock()
 		}
@@ -194,7 +194,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 			if flexibleURLContains(req.URL.String(), badRedirect) {
 				if vars.Verbose {
 					mtx.Lock()
-					bar.Clear()
+					_ := bar.Clear()
 					printer.Error("Bad Redirect: tried going to %s from %s", badRedirect, req.URL.String())
 					mtx.Unlock()
 				}
@@ -219,7 +219,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 	if err != nil {
 		if vars.Verbose {
 			mtx.Lock()
-			bar.Clear()
+			_ := bar.Clear()
 			printer.Error("Network error for %s: %v", reqURL, err)
 			mtx.Unlock()
 		}
@@ -231,14 +231,14 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 		case http.StatusNotFound, http.StatusGone:
 			if vars.Verbose {
 				mtx.Lock()
-				bar.Clear()
+				_ := bar.Clear()
 				printer.Error("'%s' not found in %s (Status: %d)", username, reqURL, res.StatusCode())
 				mtx.Unlock()
 			}
 		default:
 			if vars.Verbose {
 				mtx.Lock()
-				bar.Clear()
+				_ := bar.Clear()
 				printer.Error("Received error status %d for '%s' at %s", res.StatusCode(), username, reqURL)
 				mtx.Unlock()
 			}
@@ -253,7 +253,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 		if !strings.Contains(bodyLower, usernameLower) {
 			if vars.Verbose {
 				mtx.Lock()
-				bar.Clear()
+				_ := bar.Clear()
 				printer.Error("'%s' not found in %s (Soft 404 detected, username not in body)", username, URL)
 				mtx.Unlock()
 			}
@@ -267,7 +267,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 			if strings.Contains(bodyLower, fingerprint) {
 				if vars.Verbose {
 					mtx.Lock()
-					bar.Clear()
+					_ := bar.Clear()
 					printer.Error("'%s' not found in %s (Soft 404)", username, URL)
 					mtx.Unlock()
 				}
@@ -284,7 +284,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 			if testBody != "" && testBody == bodyLower {
 				if vars.Verbose {
 					mtx.Lock()
-					bar.Clear()
+					_ := bar.Clear()
 					printer.Error("'%s' not found in %s (Same as non-existent user)", username, URL)
 					mtx.Unlock()
 				}
@@ -300,13 +300,13 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 		verdict = strings.TrimSpace(verdict)
 		if vars.Verbose && vars.AI {
 			mtx.Lock()
-			bar.Clear()
+			_ := bar.Clear()
 			helpers.V("AI says '%s' for %s", verdict, URL)
 			mtx.Unlock()
 		}
 		if verdict == "true" {
 			mtx.Lock()
-			bar.Clear()
+			_ := bar.Clear()
 			printer.Success("FOUND: %s", URL)
 			MainDomain, err := GetMainDomain(URL)
 			if vars.FoundSites[username] == nil {
@@ -317,7 +317,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 			if PFPUrl != "" {
 				if err != nil {
 					mtx.Lock()
-					bar.Clear()
+					_ := bar.Clear()
 					printer.Error("Failed to get main domain for %s: %s", URL, err)
 					mtx.Unlock()
 					return
