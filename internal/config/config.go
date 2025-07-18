@@ -43,7 +43,7 @@ func RunInputs(json map[string]any) {
 
 	helpers.V("Set gemini key to %s", vars.GeminiAPIKey)
 
-	io.ExportJSONConfig(json)
+	_ = io.ExportJSONConfig(json)
 
 	helpers.V("Exported config to %s", vars.ConfigJSONLocation)
 
