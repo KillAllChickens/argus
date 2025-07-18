@@ -88,7 +88,7 @@ func StartScan(usernames []string) {
 		}
 	}
 
-	defer client.Close()
+	defer func(){_ = client.Close()}()
 
 	sources, err := io.GetSources()
 	helpers.HandleErr(err)
@@ -174,7 +174,8 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 	// defer client.Close()
 
 	// client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(5))
-	defer bar.Add(1)
+	// defer bar.Add(1)
+	defer func(){_ = bar.Add(1)}()
 
 	parts := strings.Split(source, "|")
 	URL := parts[len(parts)-1]
@@ -198,7 +199,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 					printer.Error("Bad Redirect: tried going to %s from %s", badRedirect, req.URL.String())
 					mtx.Unlock()
 				}
-				return fmt.Errorf("Bad Redirect: tried going to %s from %s", badRedirect, req.URL.String())
+				return fmt.Errorf("bad redirect: tried going to %s from %s", badRedirect, req.URL.String())
 			}
 		}
 		return nil

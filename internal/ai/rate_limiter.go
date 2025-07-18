@@ -36,7 +36,7 @@ func (l *TokenRateLimiter) waitIfNearLimit() {
 
 		if elapsed >= (30 * time.Second) {
 			if vars.Verbose {
-				shared.Bar.Clear()
+				_ = shared.Bar.Clear()
 				helpers.V("Rate limit window reset.")
 			}
 			l.windowStartTime = now
@@ -50,7 +50,7 @@ func (l *TokenRateLimiter) waitIfNearLimit() {
 
 			sleepDuration := timeLeftInWindow + (10 * time.Second)
 			if vars.Verbose {
-				shared.Bar.Clear()
+				_ = shared.Bar.Clear()
 				helpers.V(
 					"Rate limit high-water mark (%d) reached. Current count: %d. Sleeping for %v...",
 					l.highWaterMark,
@@ -77,7 +77,7 @@ func (l *TokenRateLimiter) recordUsage(tokens int) {
 	if time.Since(l.windowStartTime) < (30 * time.Second) {
 		l.currentTokenCount += tokens
 		if vars.Verbose {
-			shared.Bar.Clear()
+			_ = shared.Bar.Clear()
 			helpers.V("Recorded %d tokens. Total for this minute: %d", tokens, l.currentTokenCount)
 		}
 	} else {
@@ -85,7 +85,7 @@ func (l *TokenRateLimiter) recordUsage(tokens int) {
 		l.windowStartTime = time.Now()
 		l.currentTokenCount = tokens
 		if vars.Verbose {
-			shared.Bar.Clear()
+			_ = shared.Bar.Clear()
 			helpers.V("Window reset during API call. Recorded %d tokens for new window.", tokens)
 		}
 	}

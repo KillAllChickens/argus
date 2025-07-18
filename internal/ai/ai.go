@@ -45,13 +45,13 @@ func AIResponseWithRateLimit(system_prompt string, prompt string) string {
 	// helpers.HandleErr(err)
 	if err != nil {
 		if strings.Contains(err.Error(), "GenerateContentInputTokensPerModelPerMinute") || strings.Contains(err.Error(), "The model is overloaded") {
-			shared.Bar.Clear()
+			_ = shared.Bar.Clear()
 			printer.Info("Hit AI quota limit for this minute, sleeping for 30 seconds and trying again.")
 			time.Sleep(30 * time.Second)
 			return AIResponse(system_prompt, prompt)
 		}
 		if strings.Contains(err.Error(), "GenerateContentInputTokensPerModelPerDay") {
-			shared.Bar.Clear()
+			_ = shared.Bar.Clear()
 			printer.Info("Hit AI quota limit for today, continuing without AI.")
 			vars.AI = false
 			return AIResponse(system_prompt, prompt)

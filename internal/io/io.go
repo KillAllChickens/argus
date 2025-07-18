@@ -269,7 +269,7 @@ func GetConfigFile(filename string) string {
 	f, err := os.Open(FilePath)
 	helpers.HandleErr(err)
 
-	defer f.Close()
+	defer func(){_ = f.Close()}()
 
 	r := bufio.NewReader(f)
 
