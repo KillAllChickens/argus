@@ -5,27 +5,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/KillAllChickens/argus/internal/helpers" // Assuming these are your local packages
+	"github.com/KillAllChickens/argus/internal/helpers"
 	"github.com/KillAllChickens/argus/internal/printer"
 	"github.com/KillAllChickens/argus/internal/shared"
 	"github.com/KillAllChickens/argus/internal/vars"
 
-	// Correct import for APIKey
 	"google.golang.org/genai"
 )
 
-// Global instance of our rate limiter.
-// It will be shared by all calls to AIResponseWithRateLimit.
 var Limiter = NewTokenRateLimiter(1_000_000, 900_000)
 
-// AIResponseWithRateLimit is the new function that wraps the original logic
-// with our rate limiting behavior.
 func AIResponseWithRateLimit(system_prompt string, prompt string) string {
 	if !vars.AI {
 		return "true" // Include everything, including false positives
 	}
 
-	// 1. Before doing anything, check if we need to wait.
 	Limiter.waitIfNearLimit()
 
 	ctx := context.Background()
@@ -67,8 +61,6 @@ func AIResponseWithRateLimit(system_prompt string, prompt string) string {
 	// 	return "true"
 	// }
 
-	// 3. After a successful call, record the token usage.
-	// The response contains metadata with the exact token count.
 	if resp != nil && resp.UsageMetadata != nil {
 		Limiter.recordUsage(int(resp.UsageMetadata.TotalTokenCount))
 	}
@@ -80,46 +72,3 @@ func AIResponseWithRateLimit(system_prompt string, prompt string) string {
 func AIResponse(system_prompt string, prompt string) string {
 	return AIResponseWithRateLimit(system_prompt, prompt)
 }
-
-// package ai
-
-// import (
-// 	"context"
-
-// 	"github.com/KillAllChickens/argus/internal/helpers"
-// 	"github.com/KillAllChickens/argus/internal/vars"
-
-// 	"google.golang.org/genai"
-// )
-
-// func AIResponse(system_prompt string, prompt string) string {
-// 	if !vars.AI {
-// 		return "false"
-// 	}
-// 	ctx := context.Background()
-
-// 	client, err := genai.NewClient(ctx, &genai.ClientConfig{
-// 		APIKey: vars.GeminiAPIKey,
-// 	})
-
-// 	helpers.HandleErr(err)
-
-// 	config := &genai.GenerateContentConfig{
-// 		SystemInstruction: genai.NewContentFromText(system_prompt, genai.RoleUser),
-// 	}
-
-// 	// result, err := client.GenerativeModel("gemini-1.5-flash").GenerateContent(
-// 	// 	ctx,
-// 	// 	genai.Text("Explain how AI works in a few words"), // Replace with 'parts' if using system_prompt/prompt
-// 	// )
-// 	result, err := client.Models.GenerateContent(
-// 		ctx,
-// 		"gemini-2.0-flash-lite",
-// 		genai.Text(prompt),
-// 		config,
-// 	)
-
-// 	helpers.HandleErr(err)
-
-// 	return result.Text()
-// }

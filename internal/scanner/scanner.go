@@ -384,23 +384,18 @@ func GetMainDomain(rawURL string) (string, error) {
 		rawURL = "https://" + rawURL
 	}
 
-	// Parse the URL to extract the hostname
 	parsedURL, err := url.Parse(rawURL)
 	if err != nil {
 		return "", fmt.Errorf("could not parse url: %w", err)
 	}
 
-	// Use Hostname() to get the host part (e.g., "user.newgrounds.com")
 	hostname := parsedURL.Hostname()
 	if hostname == "" {
 		return "", fmt.Errorf("could not extract hostname from url")
 	}
 
-	// Use the publicsuffix package to find the "effective TLD plus one".
-	// This is the magic step that understands "com" vs "co.uk".
 	mainDomain, err := publicsuffix.EffectiveTLDPlusOne(hostname)
 	if err != nil {
-		// This can happen for invalid hostnames.
 		return "", fmt.Errorf("could not determine main domain for '%s': %w", hostname, err)
 	}
 
