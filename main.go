@@ -13,6 +13,7 @@ import (
 	"github.com/KillAllChickens/argus/internal/printer"
 	"github.com/KillAllChickens/argus/internal/scanner"
 	"github.com/KillAllChickens/argus/internal/vars"
+	"github.com/skratchdot/open-golang/open"
 )
 
 var usernames []string
@@ -180,6 +181,15 @@ func main() {
 					}
 					scanner.StartScan(vars.Usernames)
 
+					return nil
+				},
+			},
+			&cli.Command{
+				Name: "config-dir",
+				Action: func(ctx context.Context, cmd *cli.Command) error {
+					io.InitPaths(cmd.String("config-path"))
+					err := open.Run(vars.ConfigDir)
+					helpers.HandleErr(err)
 					return nil
 				},
 			},

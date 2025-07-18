@@ -8,6 +8,7 @@ require (
 	github.com/gen2brain/beeep v0.11.1
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/schollz/progressbar/v3 v3.18.0
+	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/urfave/cli/v3 v3.3.8
 	golang.org/x/net v0.41.0
 	google.golang.org/genai v1.13.0
