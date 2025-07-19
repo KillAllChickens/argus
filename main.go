@@ -103,7 +103,12 @@ func main() {
 						DefaultText: "",
 						Usage:       "Proxy to use for scanning (e.g., http://proxyserver:8888 or socks5://user:pass@proxyserver:port)",
 					},
-
+					&cli.StringFlag{
+						Name:        "proxy-list",
+						Aliases:     []string{"pl"},
+						DefaultText: "",
+						Usage:       "List of proxied to use, one per line.",
+					},
 					&cli.BoolFlag{Name: "tor", Usage: "Use Tor for scanning"},
 
 					&cli.BoolFlag{Name: "silent", Aliases: []string{"s"}, Usage: "Disable \"Scan Complete\" notifications.", Destination: &vars.Silent},
@@ -115,7 +120,7 @@ func main() {
 				},
 				Arguments: []cli.Argument{
 					&cli.StringArgs{
-						Name:        "usernames",
+						Name: "usernames",
 						// UsageText:   "usernames",
 						Destination: &usernames,
 						Max:         -1,
@@ -145,14 +150,26 @@ func main() {
 						vars.OutputTypes = append(vars.OutputTypes, "text")
 					}
 
-					if cmd.String("proxy") != "" && cmd.Bool("tor") {
-						printer.Error("Cannot use --proxy/-p with --tor. Choose one or the other.")
+					if cmd.String("proxy") != "" && cmd.String("proxy-list") != "" {
+						printer.Error("Cannot use --proxy/-p with --proxy-list/-pl. You must choose one or the other.")
+						os.Exit(1)
 					}
 
-					vars.Proxy = cmd.String("proxy")
+					if cmd.String("proxy") != "" && cmd.Bool("tor") {
+						printer.Error("Cannot use --proxy/-p with --tor. You must choose one or the other.")
+						os.Exit(1)
+					}
+
+					if cmd.String("proxy") != "" {
+						vars.Proxies = append(vars.Proxies, cmd.String("proxy"))
+					}
 
 					if cmd.Bool("tor") {
-						vars.Proxy = "socks5://127.0.0.1:9050"
+						vars.Proxies = append(vars.Proxies, "socks5://127.0.0.1:9050")
+					}
+
+					if cmd.String("proxy-list") != "" {
+						vars.Proxies, _ = io.NewlineSeperatedFileToArray(cmd.String("proxy-list"))
 					}
 
 					vars.Threads = cmd.Int("threads")

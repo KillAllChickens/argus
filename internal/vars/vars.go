@@ -37,7 +37,7 @@ var (
 	Usernames  []string
 	UserAgents []string
 	// Options
-	Proxy string
+	Proxies []string
 	// Tor   bool
 )
 

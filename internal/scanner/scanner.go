@@ -3,6 +3,16 @@ package scanner
 import (
 	"crypto/rand"
 	"fmt"
+	"math/big"
+	mrand "math/rand"
+	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+	"sync"
+	"time"
+
 	"github.com/KillAllChickens/argus/internal/ai"
 	"github.com/KillAllChickens/argus/internal/colors"
 	"github.com/KillAllChickens/argus/internal/helpers"
@@ -11,14 +21,6 @@ import (
 	"github.com/KillAllChickens/argus/internal/printer"
 	"github.com/KillAllChickens/argus/internal/shared"
 	"github.com/KillAllChickens/argus/internal/vars"
-	"math/big"
-	"net/http"
-	"net/url"
-	"os"
-	"path/filepath"
-	"strings"
-	"sync"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gen2brain/beeep"
@@ -76,16 +78,33 @@ func StartScan(usernames []string) {
 	client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(20))
 	client.SetTimeout(5 * time.Second)
 
-	if vars.Proxy != "" {
-		proxyTest := testProxy(vars.Proxy)
+	if len(vars.Proxies) == 1 {
+		proxyTest := testProxy(vars.Proxies[0])
 		if proxyTest { // Proxy works as expected
-			client.SetProxy(vars.Proxy)
+			client.SetProxy(vars.Proxies[0])
 		} else {
-			if vars.Proxy == "socks5://127.0.0.1:9050" {
-				printer.Info("Do you have the Tor proxy installed and set up?")
+			if vars.Proxies[0] == "socks5://127.0.0.1:9050" {
+				printer.Info("Do you have Tor installed and set up?")
 			}
 			os.Exit(1)
 		}
+	} else if len(vars.Proxies) > 1 {
+		if len(vars.Proxies) <= 10 {
+			printer.Info("Testing %d proxies", len(vars.Proxies))
+			for _, proxy := range vars.Proxies {
+				proxyTest := testProxy(proxy)
+				if proxyTest { // Proxy works as expected
+					client.SetProxy(proxy)
+				} else {
+					printer.Error("Your proxy list appears to contain broken proxies.")
+					os.Exit(1)
+				}
+			}
+		} else {
+			printer.Info("Running with %d proxies", len(vars.Proxies))
+		}
+		randomProxy := vars.Proxies[mrand.Intn(len(vars.Proxies))]
+		client.SetProxy(randomProxy)
 	}
 
 	defer func() { _ = client.Close() }()
@@ -175,6 +194,12 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 
 	// client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(5))
 	// defer bar.Add(1)
+	//
+	if len(vars.Proxies) > 1 {
+		randomProxy := vars.Proxies[mrand.Intn(len(vars.Proxies))]
+		client.SetProxy(randomProxy)
+	}
+
 	defer func() { _ = bar.Add(1) }()
 
 	parts := strings.Split(source, "|")
