@@ -156,7 +156,7 @@ argus c
   ```
 
 - **Proxy and Tor Support:**
-  You can use proxies or Tor for enhanced anonymity! Simply specify a proxy with the `--proxy` flag, or Tor with `--tor`
+  You can use proxies or Tor for enhanced anonymity! Simply specify a proxy with the `--proxy` flag, or Tor with `--tor`.
 
   ```bash
   # Use a standard HTTP/SOCKS5 proxy (e.g., http://proxyserver:8888 or socks5://user:pass@proxyserver:port)
