@@ -203,7 +203,7 @@ argus c
      --proxy-list string, --pl string   List of proxied to use, one per line.
      --tor                              Use Tor for scanning (default: false)
      --silent, -s                       Disable "Scan Complete" notifications. (default: false)
-     --deep-scan, -d                    Run a Deep Scan, will try to collect more information (default: false)
+     --deep, -d                         Run a Deep Scan, will try to collect more information (default: false)
      --html                             Output as HTML (default: false)
      --pdf                              Output as PDF (default: false)
      --json                             Output as JSON (default: false)
