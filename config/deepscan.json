@@ -1,0 +1,64 @@
+{
+  "chess.com": {
+    "targets": [
+      {
+        "name": "real_name",
+        "selector": "div.profile-card-name"
+      }
+    ]
+  },
+  "tiktok.com": {
+    "targets": [
+      {
+        "name": "description",
+        "selector": "div.text-center.stats-body div.text-center.pl-2.pr-2.pb-3",
+        "actions": [
+          {
+            "type": "ignore_contains",
+            "value": "is the username of a TikTok creator"
+          }
+        ]
+      },
+      {
+        "name": "follower_count",
+        "selector": "div.col-3.p-0:has(span.user:contains('followers')) b"
+      },
+      {
+        "name": "following_count",
+        "selector": "div.col-3.p-0:has(span.user:contains('following')) b"
+      }
+    ]
+  },
+  "github.com": {
+    "targets": [
+      {
+        "name": "follower_count",
+        "selector": "a[href*='tab=followers'] .text-bold"
+      },
+      {
+        "name": "following_count",
+        "selector": "a[href*='tab=following'] .text-bold"
+      }
+    ]
+  },
+  "roblox.com": {
+    "targets": [
+      {
+        "name": "friends",
+        "selector": "a[href*='friends#!/friends'] b"
+      },
+      {
+        "name": "follower_count",
+        "selector": "a[href*='friends#!/followers'] b"
+      },
+      {
+        "name": "following_count",
+        "selector": "a[href*='friends#!/following'] b"
+      },
+      {
+        "name": "description",
+        "selector": "span.profile-about-content-text.ng-binding.linkify"
+      }
+    ]
+  }
+}

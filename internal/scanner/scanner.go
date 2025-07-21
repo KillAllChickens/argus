@@ -354,6 +354,17 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 				}
 				vars.FoundPFPs[username][MainDomain] = PFPUrl
 			}
+
+			if vars.DeepScanEnabled {
+				if domainConfig, ok := (*vars.DeepScanConfig)[MainDomain]; ok {
+					deepScanResult := performDeepScan(res.String(), domainConfig)
+					if vars.DeepScanResults[username] == nil {
+						vars.DeepScanResults[username] = make(map[string]vars.DeepScanResult)
+					}
+					vars.DeepScanResults[username][MainDomain] = deepScanResult
+				}
+			}
+
 			mtx.Unlock()
 
 		}
@@ -447,6 +458,20 @@ func CompleteScanning() {
 		printer.Info("All sites for %s:", username)
 		for n, site := range vars.FoundSites[username] {
 			printer.Success("%-14s => %-45s", n, site)
+			if deepScanData, ok := vars.DeepScanResults[username][n]; ok {
+				if deepScanData.Description != nil {
+					printer.Info("  Description: %s", *deepScanData.Description)
+				}
+				if deepScanData.FollowerCount != nil {
+					printer.Info("  Followers: %d", *deepScanData.FollowerCount)
+				}
+				if deepScanData.FollowingCount != nil {
+					printer.Info("  Following: %d", *deepScanData.FollowingCount)
+				}
+				if deepScanData.RealName != nil {
+					printer.Info("  Real Name: %s", *deepScanData.RealName)
+				}
+			}
 		}
 	}
 	if len(vars.OutputTypes) == 0 {
@@ -592,4 +617,49 @@ func testProxy(proxyAddr string) bool {
 	}
 
 	return true
+}
+
+func performDeepScan(body string, config vars.DeepScanDomain) vars.DeepScanResult {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
+	if err != nil {
+		return vars.DeepScanResult{}
+	}
+
+	result := vars.DeepScanResult{}
+
+	for _, target := range config.Targets {
+		selection := doc.Find(target.Selector)
+		helpers.V("target.Selector: %s", target.Selector)
+		text := strings.TrimSpace(selection.First().Text())
+
+		// Apply actions
+		for _, action := range target.Actions {
+			if action.Type == "ignore_contains" && strings.Contains(text, action.Value) {
+				text = "" // Clear the text if it contains the ignored value
+				break
+			}
+		}
+
+		if text == "" {
+			continue
+		}
+
+		// Map the extracted data to the DeepScanResult struct
+		switch target.Name {
+		case "description":
+			result.Description = &text
+		case "follower_count":
+			if followerCount, err := helpers.ParseShorthandInt(strings.ReplaceAll(text, ",", "")); err == nil {
+				result.FollowerCount = &followerCount
+			}
+		case "following_count":
+			if followingCount, err := helpers.ParseShorthandInt(strings.ReplaceAll(text, ",", "")); err == nil {
+				result.FollowingCount = &followingCount
+			}
+		case "real_name":
+			result.RealName = &text
+		}
+	}
+
+	return result
 }

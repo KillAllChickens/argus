@@ -112,6 +112,9 @@ func main() {
 					&cli.BoolFlag{Name: "tor", Usage: "Use Tor for scanning"},
 
 					&cli.BoolFlag{Name: "silent", Aliases: []string{"s"}, Usage: "Disable \"Scan Complete\" notifications.", Destination: &vars.Silent},
+
+					&cli.BoolFlag{Name: "deep-scan", Aliases: []string{"ds"}, Usage: "Run a Deep Scan, will try to collect more information", Destination: &vars.DeepScanEnabled},
+
 					// Output types
 					&cli.BoolFlag{Name: "html", Usage: "Output as HTML"},
 					&cli.BoolFlag{Name: "pdf", Usage: "Output as PDF"},
