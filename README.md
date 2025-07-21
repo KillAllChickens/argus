@@ -20,16 +20,16 @@ For better accuracy, Argus Panoptes can use Google Gemini to filter out false po
 <details>
 <summary>Table of Contents</summary>
 
-  - [✨ Features](#-features)
-  - [🛠️ Installation](#-installation)
-    - [Linux](#linux)
-    - [Windows](#windows)
-  - [Usage](#usage)
-    - [Configuration](#configuration)
-    - [Scanning](#scanning)
-  - [📝 Usernames](#-usernames)
-    - [Command-Line Usernames](#command-line-usernames)
-    - [Username Files](#username-files)
+- [✨ Features](#-features)
+- [🛠️ Installation](#-installation)
+  - [Linux](#linux)
+  - [Windows](#windows)
+- [Usage](#usage)
+  - [Configuration](#configuration)
+  - [Scanning](#scanning)
+- [📝 Usernames](#-usernames)
+  - [Command-Line Usernames](#command-line-usernames)
+  - [Username Files](#username-files)
 - [🚧 Planned Features](#-planned-features)
 
 </details>
@@ -151,8 +151,8 @@ argus c
   # Output to Text (default: results/<username>_results.txt)
   argus scan <username> --txt
 
-  # Output to all supported formats
-  argus scan <username> --html --pdf --json --txt
+  # Output to all supported formats you can use --all
+  argus scan <username> --all
   ```
 
 - **Proxy and Tor Support:**
@@ -164,6 +164,20 @@ argus c
 
   # Route all traffic through the Tor network (requires Tor to be installed and running locally on the default port, 9050)
   argus scan <username> --tor
+
+  # Or use a list of proxies
+  argus scan <username> --proxy-list "proxies.txt"
+
+  ```
+
+- **Perform a deep scan:**
+  Perform a deep scan to gather more information from found profiles, including descriptions, real names, follow/following counts, and more.
+  - **Note:** Current only supports a handful of sites, more WILL be added with newer releases.
+
+  ```bash
+  argus scan <username> --deep
+  # Or for short
+  argus scan <username> -d
   ```
 
 - **Additional Options:**
@@ -186,12 +200,15 @@ argus c
      --username-list string, -u string  Get usernames to scan, one per line
      --output string, -o string         The directory to output to, defaults to ./results/. if you don't specify a specific type, it will output all types
      --proxy string, -p string          Proxy to use for scanning (e.g., http://proxyserver:8888 or socks5://user:pass@proxyserver:port)
+     --proxy-list string, --pl string   List of proxied to use, one per line.
      --tor                              Use Tor for scanning (default: false)
      --silent, -s                       Disable "Scan Complete" notifications. (default: false)
+     --deep-scan, -d                    Run a Deep Scan, will try to collect more information (default: false)
      --html                             Output as HTML (default: false)
      --pdf                              Output as PDF (default: false)
      --json                             Output as JSON (default: false)
      --text, --txt                      Output as Text (default: false)
+     --all                              Output as all supported types (default: false)
   ```
 
 ## 📝 Usernames
@@ -226,7 +243,12 @@ user3
 ```
 
 # 🚧 Planned Features
+
 We're constantly working to make Argus even more powerful and versatile! Here is a peek into what we have planned for future releases!
-- **Proxy List Support:** Currently, you can use a single proxy. We're planning to add the ability to load a list of proxies and **rotate through them automatically** for enhanced anonymity and resilience against rate limits.
+
 - **Simple Site List Management:** We want to make it easier to customize the sites Argus scans. This includes commands to **add, remove, and update site configurations** directly, putting more control in your hands.
-- **Deep Scan Mode:** Beyond just finding if a username exists, we aim to add a "deep scan" mode. This feature would attempt to **extract more public information** from found profiles (e.g., linked social media, "about me" sections, public post counts).
+
+## Finished
+
+- ~~**Proxy List Support:** Currently, you can use a single proxy. We're planning to add the ability to load a list of proxies and **rotate through them automatically** for enhanced anonymity and resilience against rate limits.~~
+- ~~**Deep Scan Mode:** Beyond just finding if a username exists, we aim to add a "deep scan" mode. This feature would attempt to **extract more public information** from found profiles (e.g., linked social media, "about me" sections, public post counts).~~

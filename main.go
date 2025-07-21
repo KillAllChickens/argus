@@ -113,13 +113,14 @@ func main() {
 
 					&cli.BoolFlag{Name: "silent", Aliases: []string{"s"}, Usage: "Disable \"Scan Complete\" notifications.", Destination: &vars.Silent},
 
-					&cli.BoolFlag{Name: "deep-scan", Aliases: []string{"d"}, Usage: "Run a Deep Scan, will try to collect more information", Destination: &vars.DeepScanEnabled},
+					&cli.BoolFlag{Name: "deep", Aliases: []string{"d"}, Usage: "Run a Deep Scan, will try to collect more information", Destination: &vars.DeepScanEnabled},
 
 					// Output types
 					&cli.BoolFlag{Name: "html", Usage: "Output as HTML"},
 					&cli.BoolFlag{Name: "pdf", Usage: "Output as PDF"},
 					&cli.BoolFlag{Name: "json", Usage: "Output as JSON"},
 					&cli.BoolFlag{Name: "text", Aliases: []string{"txt"}, Usage: "Output as Text"},
+					&cli.BoolFlag{Name: "all", Usage: "Output as all supported types"},
 				},
 				Arguments: []cli.Argument{
 					&cli.StringArgs{
@@ -151,6 +152,9 @@ func main() {
 					}
 					if cmd.Bool("text") {
 						vars.OutputTypes = append(vars.OutputTypes, "text")
+					}
+					if cmd.Bool("all") {
+						vars.OutputTypes = append(vars.OutputTypes, "html", "pdf", "json", "text")
 					}
 
 					if cmd.String("proxy") != "" && cmd.String("proxy-list") != "" {
