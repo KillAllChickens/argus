@@ -103,19 +103,28 @@ func main() {
 						DefaultText: "",
 						Usage:       "Proxy to use for scanning (e.g., http://proxyserver:8888 or socks5://user:pass@proxyserver:port)",
 					},
-
+					&cli.StringFlag{
+						Name:        "proxy-list",
+						Aliases:     []string{"pl"},
+						DefaultText: "",
+						Usage:       "List of proxied to use, one per line.",
+					},
 					&cli.BoolFlag{Name: "tor", Usage: "Use Tor for scanning"},
 
 					&cli.BoolFlag{Name: "silent", Aliases: []string{"s"}, Usage: "Disable \"Scan Complete\" notifications.", Destination: &vars.Silent},
+
+					&cli.BoolFlag{Name: "deep", Aliases: []string{"d"}, Usage: "Run a Deep Scan, will try to collect more information", Destination: &vars.DeepScanEnabled},
+
 					// Output types
 					&cli.BoolFlag{Name: "html", Usage: "Output as HTML"},
 					&cli.BoolFlag{Name: "pdf", Usage: "Output as PDF"},
 					&cli.BoolFlag{Name: "json", Usage: "Output as JSON"},
 					&cli.BoolFlag{Name: "text", Aliases: []string{"txt"}, Usage: "Output as Text"},
+					&cli.BoolFlag{Name: "all", Usage: "Output as all supported types"},
 				},
 				Arguments: []cli.Argument{
 					&cli.StringArgs{
-						Name:        "usernames",
+						Name: "usernames",
 						// UsageText:   "usernames",
 						Destination: &usernames,
 						Max:         -1,
@@ -144,15 +153,30 @@ func main() {
 					if cmd.Bool("text") {
 						vars.OutputTypes = append(vars.OutputTypes, "text")
 					}
-
-					if cmd.String("proxy") != "" && cmd.Bool("tor") {
-						printer.Error("Cannot use --proxy/-p with --tor. Choose one or the other.")
+					if cmd.Bool("all") {
+						vars.OutputTypes = append(vars.OutputTypes, "html", "pdf", "json", "text")
 					}
 
-					vars.Proxy = cmd.String("proxy")
+					if cmd.String("proxy") != "" && cmd.String("proxy-list") != "" {
+						printer.Error("Cannot use --proxy/-p with --proxy-list/-pl. You must choose one or the other.")
+						os.Exit(1)
+					}
+
+					if cmd.String("proxy") != "" && cmd.Bool("tor") {
+						printer.Error("Cannot use --proxy/-p with --tor. You must choose one or the other.")
+						os.Exit(1)
+					}
+
+					if cmd.String("proxy") != "" {
+						vars.Proxies = append(vars.Proxies, cmd.String("proxy"))
+					}
 
 					if cmd.Bool("tor") {
-						vars.Proxy = "socks5://127.0.0.1:9050"
+						vars.Proxies = append(vars.Proxies, "socks5://127.0.0.1:9050")
+					}
+
+					if cmd.String("proxy-list") != "" {
+						vars.Proxies, _ = io.NewlineSeperatedFileToArray(cmd.String("proxy-list"))
 					}
 
 					vars.Threads = cmd.Int("threads")

@@ -3,15 +3,8 @@ package scanner
 import (
 	"crypto/rand"
 	"fmt"
-	"github.com/KillAllChickens/argus/internal/ai"
-	"github.com/KillAllChickens/argus/internal/colors"
-	"github.com/KillAllChickens/argus/internal/helpers"
-	"github.com/KillAllChickens/argus/internal/io"
-	"github.com/KillAllChickens/argus/internal/output"
-	"github.com/KillAllChickens/argus/internal/printer"
-	"github.com/KillAllChickens/argus/internal/shared"
-	"github.com/KillAllChickens/argus/internal/vars"
 	"math/big"
+	mrand "math/rand"
 	"net/http"
 	"net/url"
 	"os"
@@ -20,10 +13,21 @@ import (
 	"sync"
 	"time"
 
+	"github.com/KillAllChickens/argus/internal/ai"
+	"github.com/KillAllChickens/argus/internal/colors"
+	"github.com/KillAllChickens/argus/internal/helpers"
+	"github.com/KillAllChickens/argus/internal/io"
+	"github.com/KillAllChickens/argus/internal/output"
+	"github.com/KillAllChickens/argus/internal/printer"
+	"github.com/KillAllChickens/argus/internal/shared"
+	"github.com/KillAllChickens/argus/internal/vars"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gen2brain/beeep"
 	"github.com/schollz/progressbar/v3"
 	"golang.org/x/net/publicsuffix"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"resty.dev/v3"
 )
 
@@ -76,16 +80,33 @@ func StartScan(usernames []string) {
 	client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(20))
 	client.SetTimeout(5 * time.Second)
 
-	if vars.Proxy != "" {
-		proxyTest := testProxy(vars.Proxy)
+	if len(vars.Proxies) == 1 {
+		proxyTest := testProxy(vars.Proxies[0])
 		if proxyTest { // Proxy works as expected
-			client.SetProxy(vars.Proxy)
+			client.SetProxy(vars.Proxies[0])
 		} else {
-			if vars.Proxy == "socks5://127.0.0.1:9050" {
-				printer.Info("Do you have the Tor proxy installed and set up?")
+			if vars.Proxies[0] == "socks5://127.0.0.1:9050" {
+				printer.Info("Do you have Tor installed and set up?")
 			}
 			os.Exit(1)
 		}
+	} else if len(vars.Proxies) > 1 {
+		if len(vars.Proxies) <= 10 {
+			printer.Info("Testing %d proxies", len(vars.Proxies))
+			for _, proxy := range vars.Proxies {
+				proxyTest := testProxy(proxy)
+				if proxyTest { // Proxy works as expected
+					client.SetProxy(proxy)
+				} else {
+					printer.Error("Your proxy list appears to contain broken proxies.")
+					os.Exit(1)
+				}
+			}
+		} else {
+			printer.Info("Running with %d proxies", len(vars.Proxies))
+		}
+		randomProxy := vars.Proxies[mrand.Intn(len(vars.Proxies))]
+		client.SetProxy(randomProxy)
 	}
 
 	defer func() { _ = client.Close() }()
@@ -175,6 +196,12 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 
 	// client.SetRedirectPolicy(resty.FlexibleRedirectPolicy(5))
 	// defer bar.Add(1)
+	//
+	if len(vars.Proxies) > 1 {
+		randomProxy := vars.Proxies[mrand.Intn(len(vars.Proxies))]
+		client.SetProxy(randomProxy)
+	}
+
 	defer func() { _ = bar.Add(1) }()
 
 	parts := strings.Split(source, "|")
@@ -329,6 +356,17 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 				}
 				vars.FoundPFPs[username][MainDomain] = PFPUrl
 			}
+
+			if vars.DeepScanEnabled {
+				if domainConfig, ok := (*vars.DeepScanConfig)[MainDomain]; ok {
+					deepScanResult := performDeepScan(res.String(), domainConfig)
+					if vars.DeepScanResults[username] == nil {
+						vars.DeepScanResults[username] = make(map[string]vars.DeepScanResult)
+					}
+					vars.DeepScanResults[username][MainDomain] = deepScanResult
+				}
+			}
+
 			mtx.Unlock()
 
 		}
@@ -422,6 +460,29 @@ func CompleteScanning() {
 		printer.Info("All sites for %s:", username)
 		for n, site := range vars.FoundSites[username] {
 			printer.Success("%-14s => %-45s", n, site)
+			if deepScanData, ok := vars.DeepScanResults[username][n]; ok {
+				if deepScanData.Description != nil {
+					printer.Info("  Description: %s", *deepScanData.Description)
+				}
+				if deepScanData.FollowerCount != nil {
+					printer.Info("  Followers: %d", *deepScanData.FollowerCount)
+				}
+				if deepScanData.FollowingCount != nil {
+					printer.Info("  Following: %d", *deepScanData.FollowingCount)
+				}
+				if deepScanData.RealName != nil {
+					printer.Info("  Real Name: %s", *deepScanData.RealName)
+				}
+				if len(deepScanData.NonDefinedActions) > 0 {
+					for _, action := range deepScanData.NonDefinedActions {
+						caser := cases.Title(language.English)
+						actionName := strings.ReplaceAll(action.Name, "_", " ")
+						actionName = strings.TrimSpace(actionName)
+						actionName = caser.String(actionName)
+						printer.Info("  %s: %s", actionName, action.Value)
+					}
+				}
+			}
 		}
 	}
 	if len(vars.OutputTypes) == 0 {
@@ -567,4 +628,51 @@ func testProxy(proxyAddr string) bool {
 	}
 
 	return true
+}
+
+func performDeepScan(body string, config vars.DeepScanDomain) vars.DeepScanResult {
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
+	if err != nil {
+		return vars.DeepScanResult{}
+	}
+
+	result := vars.DeepScanResult{}
+
+	for _, target := range config.Targets {
+		selection := doc.Find(target.Selector)
+		helpers.V("target.Selector: %s", target.Selector)
+		text := strings.TrimSpace(selection.First().Text())
+
+		// Apply actions
+		for _, action := range target.Actions {
+			if action.Type == "ignore_contains" && strings.Contains(text, action.Value) {
+				text = ""
+				break
+			}
+		}
+
+		if text == "" {
+			continue
+		}
+
+		// Map the extracted data to the DeepScanResult struct
+		switch target.Name {
+		case "description":
+			result.Description = &text
+		case "follower_count":
+			if followerCount, err := helpers.ParseShorthandInt(strings.ReplaceAll(text, ",", "")); err == nil {
+				result.FollowerCount = &followerCount
+			}
+		case "following_count":
+			if followingCount, err := helpers.ParseShorthandInt(strings.ReplaceAll(text, ",", "")); err == nil {
+				result.FollowingCount = &followingCount
+			}
+		case "real_name":
+			result.RealName = &text
+		default:
+			result.NonDefinedActions = append(result.NonDefinedActions, vars.NonDefinedAction{Name: target.Name, Value: text})
+		}
+	}
+
+	return result
 }

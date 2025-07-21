@@ -1,133 +1,267 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{ .Username }} | Argus Panoptes</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Scan for {{ .Username }} | Argus Panoptes</title>
+        <style>
+            * {
+                box-sizing: border-box;
+            }
 
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f7;
-            color: #222;
-        }
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #f4f4f7;
+                color: #222;
+            }
 
-        header {
-            background-color: #2d2d2d;
-            color: white;
-            padding: 1rem 2rem;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        }
+            header {
+                background-color: #2d2d2d;
+                color: white;
+                padding: 1rem 2rem;
+                text-align: center;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            }
 
-        header h1 {
-            margin: 0;
-            font-size: 1.8rem;
-        }
+            header h1 {
+                margin: 0;
+                font-size: 1.8rem;
+            }
 
-        .container {
-            max-width: 960px;
-            margin: 2rem auto;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+            .container {
+                max-width: 1200px; /* Increased width for new column */
+                margin: 2rem auto;
+                background: white;
+                padding: 2rem;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-        }
-
-        thead {
-            background-color: #e2e8f0;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #f1f5f9;
-        }
-
-        tbody tr:hover {
-            background-color: #e0f2fe;
-        }
-
-        th {
-            font-weight: 600;
-            color: #1a202c;
-            border-bottom: 2px solid #cbd5e0;
-        }
-
-        td img {
-            border-radius: 8px;
-            border: 1px solid #cbd5e0;
-        }
-
-        @media (max-width: 600px) {
-            table, thead, tbody, th, td, tr {
-                display: block;
+            table {
                 width: 100%;
+                border-collapse: collapse;
+                margin-top: 1rem;
+            }
+
+            th,
+            td {
+                padding: 0.75rem 1rem;
+                text-align: left;
+                vertical-align: top; /* Align content to the top */
             }
 
             thead {
-                display: none;
+                background-color: #e2e8f0;
             }
 
-            td {
-                padding: 1rem;
-                position: relative;
-                text-align: right;
-                border-bottom: 1px solid #ccc;
+            tbody tr:nth-child(even) {
+                background-color: #f1f5f9;
             }
 
-            td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 1rem;
-                font-weight: bold;
-                text-transform: capitalize;
+            tbody tr:hover {
+                background-color: #e0f2fe;
+            }
+
+            th {
+                font-weight: 600;
+                color: #1a202c;
+                border-bottom: 2px solid #cbd5e0;
+            }
+
+            td a {
+                font-weight: 500;
+                color: #2563eb;
+                text-decoration: none;
+            }
+            td a:hover {
+                text-decoration: underline;
+            }
+
+            td img {
+                border-radius: 8px;
+                border: 1px solid #cbd5e0;
+            }
+
+            .no-data {
+                color: #94a3b8;
+            }
+
+            /* Styles for the deep scan details list */
+            .deep-scan-list {
+                list-style-type: none;
+                padding-left: 0;
+                margin: 0;
+                font-size: 0.9rem;
                 color: #4a5568;
             }
-        }
-    </style>
-</head>
-<body>
-    <header>
-        <h1>Argus Scan Results for {{ .Username }}</h1>
-    </header>
-    <main class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Site</th>
-                    <th>Profile Picture</th>
-                </tr>
-            </thead>
-            <tbody>
-                {{ range $site, $url := .Sites }}
-                <tr>
-                    <td data-label="Site"><a target="_blank" rel="noopener noreferrer" href="{{ $url }}">{{ $site }}</a></td>
-                    <td data-label="Profile Picture">
-                        {{ with index $.PFPs $site }}
-                        <img src="{{ . }}" alt="{{ $site }} pfp" width="50" />
-                        {{ else }}
-                        <img src="https://www.gravatar.com/avatar/?d=mp" alt="default pfp" width="50" />
+            .deep-scan-list li {
+                margin-bottom: 0.3rem;
+            }
+            .deep-scan-list li strong {
+                color: #1a202c;
+            }
+            /* Nested list for socials etc. */
+            .deep-scan-list ul {
+                list-style-type: disc;
+                padding-left: 20px;
+                margin-top: 0.2rem;
+            }
+
+            footer {
+                text-align: center;
+                margin-top: 2rem;
+                font-size: 0.8rem;
+                color: #64748b;
+            }
+
+            @media (max-width: 800px) {
+                /* Adjusted breakpoint */
+                .container {
+                    padding: 1rem;
+                }
+                table,
+                thead,
+                tbody,
+                th,
+                td,
+                tr {
+                    display: block;
+                    width: 100%;
+                }
+
+                thead {
+                    display: none;
+                }
+
+                tr {
+                    border-bottom: 2px solid #cbd5e0;
+                    margin-bottom: 1rem;
+                }
+
+                td {
+                    padding: 1rem;
+                    padding-left: 50%; /* Make space for label */
+                    position: relative;
+                    text-align: right;
+                    border: none;
+                }
+
+                td::before {
+                    content: attr(data-label);
+                    position: absolute;
+                    left: 1rem;
+                    width: 45%;
+                    font-weight: bold;
+                    text-align: left;
+                    text-transform: capitalize;
+                    color: #4a5568;
+                }
+
+                .deep-scan-list {
+                    text-align: left; /* Align list text properly on mobile */
+                    margin-left: -50%; /* Counteract the padding */
+                    padding-left: 50%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <h1>Argus Scan Results for {{ .Username }}</h1>
+        </header>
+        <main class="container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Site</th>
+                        <th>Profile Picture</th>
+                        {{ if $.DeepScanEnabled }}
+                        <th>Deep Scan Details</th>
                         {{ end }}
-                    </td>
-                </tr>
-                {{ end }}
-            </tbody>
-        </table>
-    </main>
-</body>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{ range $site, $url := .Sites }}
+                    <tr>
+                        <td data-label="Site">
+                            <a
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                href="{{ $url }}"
+                                >{{ $site }}</a
+                            >
+                        </td>
+                        <td data-label="Profile Picture">
+                            {{ with index $.PFPs $site }}
+                            <img
+                                src="{{ . }}"
+                                alt="{{ $site }} pfp"
+                                width="50"
+                            />
+                            {{ else }}
+                            <img
+                                src="https://www.gravatar.com/avatar/?d=mp"
+                                alt="default pfp"
+                                width="50"
+                            />
+                            {{ end }}
+                        </td>
+                        {{ if $.DeepScanEnabled }}
+                        <td data-label="Deep Scan Details">
+                            {{/* Use the custom function to get deep scan data
+                            for the current site */}} {{ $deepScan :=
+                            getDeepScan $.DeepScans $site }} {{ if $deepScan }}
+                            <ul class="deep-scan-list">
+                                {{ with $deepScan.RealName }}
+                                <li><strong>Real Name:</strong> {{ . }}</li>
+                                {{ end }} {{ with $deepScan.Description }}
+                                <li><strong>Description:</strong> {{ . }}</li>
+                                {{ end }} {{ with $deepScan.FollowerCount }}
+                                <li><strong>Followers:</strong> {{ . }}</li>
+                                {{ end }} {{ with $deepScan.FollowingCount }}
+                                <li><strong>Following:</strong> {{ . }}</li>
+                                {{ end }} {{ with $deepScan.PublicPostCount }}
+                                <li><strong>Posts:</strong> {{ . }}</li>
+                                {{ end }} {{ with $deepScan.LinkedSocials }}
+                                <li>
+                                    <strong>Linked Socials:</strong>
+                                    <ul>
+                                        {{ range . }}
+                                        <li>{{ . }}</li>
+                                        {{ end }}
+                                    </ul>
+                                </li>
+                                {{ end }} {{ with $deepScan.NonDefinedActions }}
+                                <li>
+                                    <strong>Other Details:</strong>
+                                    <ul>
+                                        {{ range . }}
+                                        <li>
+                                            <strong>{{ .Name }}:</strong> {{
+                                            .Value }}
+                                        </li>
+                                        {{ end }}
+                                    </ul>
+                                </li>
+                                {{ end }}
+                            </ul>
+                            {{ else }}
+                            <span class="no-data">N/A</span>
+                            {{ end }}
+                        </td>
+                        {{ end }}
+                    </tr>
+                    {{ end }}
+                </tbody>
+            </table>
+            <footer>
+                <p>
+                    Report generated on {{ .Timestamp }} with Argus {{ .Version
+                    }}
+                </p>
+            </footer>
+        </main>
+    </body>
 </html>

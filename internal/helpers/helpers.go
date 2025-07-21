@@ -3,7 +3,10 @@ package helpers
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/KillAllChickens/argus/internal/colors"
 	"github.com/KillAllChickens/argus/internal/printer"
@@ -49,4 +52,28 @@ func PathExists(path string) (bool, error) {
 		return false, nil // Path does not exist
 	}
 	return false, err // Other error occurred
+}
+
+func ParseShorthandInt(s string) (int, error) {
+	s = strings.ToUpper(strings.TrimSpace(s))
+	multiplier := 1.0
+
+	switch {
+	case strings.HasSuffix(s, "K"):
+		multiplier = 1_000
+		s = strings.TrimSuffix(s, "K")
+	case strings.HasSuffix(s, "M"):
+		multiplier = 1_000_000
+		s = strings.TrimSuffix(s, "M")
+	case strings.HasSuffix(s, "B"):
+		multiplier = 1_000_000_000
+		s = strings.TrimSuffix(s, "B")
+	}
+
+	num, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(math.Round(num * multiplier)), nil
 }

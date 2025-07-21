@@ -4,9 +4,24 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+
+	"github.com/KillAllChickens/argus/internal/printer"
 )
 
-var Version string = "v0.1.0"
+var Version string = "v0.1.2"
+
+// Deep Scan Resutl struct
+type DeepScanResult struct {
+	Description       *string   `json:"description,omitempty"`
+	LinkedSocials     *[]string `json:"linked_socials,omitempty"`
+	PublicPostCount   *int      `json:"public_post_count,omitempty"`
+	FollowerCount     *int      `json:"follower_count,omitempty"`
+	FollowingCount    *int      `json:"following_count,omitempty"`
+	ProfilePictureURL *string   `json:"profile_picture_url,omitempty"`
+	RealName          *string   `json:"real_name,omitempty"`
+	// the IDK yet actions
+	NonDefinedActions []NonDefinedAction `json:"non_defined_actions,omitempty"`
+}
 
 // Argument var
 var (
@@ -37,7 +52,7 @@ var (
 	Usernames  []string
 	UserAgents []string
 	// Options
-	Proxy string
+	Proxies []string
 	// Tor   bool
 )
 
@@ -48,7 +63,34 @@ var (
 	// AI result vars
 	AISiteSummaries map[string]string
 	AITotalSummary  string
+
+	// Deep Scan related ones
+	DeepScanEnabled bool
+	DeepScanConfig  *map[string]DeepScanDomain
+	DeepScanResults map[string]map[string]DeepScanResult = make(map[string]map[string]DeepScanResult)
 )
+
+// GEMINI
+
+type DeepScanDomain struct {
+	Targets []DeepScanTarget `json:"targets"`
+}
+
+type DeepScanTarget struct {
+	Name     string           `json:"name"`
+	Selector string           `json:"selector"`
+	Actions  []DeepScanAction `json:"actions"`
+}
+
+type DeepScanAction struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
+type NonDefinedAction struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
 
 func InitConfVars() {
 	var json map[string]any
@@ -73,6 +115,19 @@ func InitConfVars() {
 	if err != nil {
 		os.Exit(1)
 	}
+
+	deepScanConfigLocation, err := getFilePath("deepscan.json")
+	if err == nil {
+		_, err = LoadAndStringifyJSON(deepScanConfigLocation, &DeepScanConfig)
+		if err != nil {
+			// Handle error, maybe log it and disable deep scanning
+			printer.Error("Could not import deepscan.json, continuing without deep scanning")
+			DeepScanEnabled = false
+		}
+	} else {
+		DeepScanEnabled = false
+	}
+
 }
 
 func LoadAndStringifyJSON(path string, v any) (string, error) {
