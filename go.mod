@@ -11,6 +11,7 @@ require (
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/urfave/cli/v3 v3.3.8
 	golang.org/x/net v0.41.0
+	golang.org/x/text v0.26.0
 	google.golang.org/genai v1.13.0
 	resty.dev/v3 v3.0.0-beta.3
 )
@@ -49,7 +50,6 @@ require (
 	golang.org/x/crypto v0.39.0 // indirect
 	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
-	golang.org/x/text v0.26.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/grpc v1.73.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
