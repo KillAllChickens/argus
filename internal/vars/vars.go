@@ -18,8 +18,9 @@ type DeepScanResult struct {
 	FollowerCount     *int      `json:"follower_count,omitempty"`
 	FollowingCount    *int      `json:"following_count,omitempty"`
 	ProfilePictureURL *string   `json:"profile_picture_url,omitempty"`
-	RealName *string   `json:"real_name,omitempty"`
-
+	RealName          *string   `json:"real_name,omitempty"`
+	// the IDK yet actions
+	NonDefinedActions []NonDefinedAction `json:"non_defined_actions,omitempty"`
 }
 
 // Argument var
@@ -86,7 +87,10 @@ type DeepScanAction struct {
 	Value string `json:"value"`
 }
 
-//
+type NonDefinedAction struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
 
 func InitConfVars() {
 	var json map[string]any

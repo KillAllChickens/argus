@@ -471,6 +471,11 @@ func CompleteScanning() {
 				if deepScanData.RealName != nil {
 					printer.Info("  Real Name: %s", *deepScanData.RealName)
 				}
+				if len(deepScanData.NonDefinedActions) > 0 {
+					for _, action := range deepScanData.NonDefinedActions {
+						printer.Info("  %s: %s", action.Name, action.Value)
+					}
+				}
 			}
 		}
 	}
@@ -658,6 +663,8 @@ func performDeepScan(body string, config vars.DeepScanDomain) vars.DeepScanResul
 			}
 		case "real_name":
 			result.RealName = &text
+		default:
+			result.NonDefinedActions = append(result.NonDefinedActions, vars.NonDefinedAction{Name: target.Name, Value: text})
 		}
 	}
 
