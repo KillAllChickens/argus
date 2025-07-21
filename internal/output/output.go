@@ -16,6 +16,8 @@ import (
 	"github.com/KillAllChickens/argus/internal/helpers"
 	"github.com/KillAllChickens/argus/internal/io"
 	"github.com/KillAllChickens/argus/internal/vars"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 
 	"github.com/jung-kurt/gofpdf"
 )
@@ -158,7 +160,6 @@ func OutputText() {
 }
 
 func OutputPDF() {
-	// Define a more professional color palette and layout constants
 	const (
 		pageMargin   = 10.0
 		pageWidth    = 210.0
@@ -179,7 +180,6 @@ func OutputPDF() {
 		pdf.SetMargins(pageMargin, pageMargin, pageMargin)
 		pdf.AddPage()
 
-		// --- Reusable Header Function ---
 		drawHeader := func() {
 			pdf.SetFont("Arial", "B", 20)
 			pdf.SetTextColor(headerTextColor.r, headerTextColor.g, headerTextColor.b)
@@ -192,7 +192,6 @@ func OutputPDF() {
 			pdf.Ln(8)
 		}
 
-		// --- Table Header ---
 		drawTableHeader := func() {
 			pdf.SetFont("Arial", "B", 12)
 			pdf.SetFillColor(headerBgColor.r, headerBgColor.g, headerBgColor.b)
@@ -201,47 +200,37 @@ func OutputPDF() {
 			pdf.CellFormat(0, 10, "Details", "1", 1, "C", true, 0, "")
 		}
 
-		// Initial drawing of headers
 		drawHeader()
 		drawTableHeader()
 
-		// --- Loop through sites and render results ---
 		for siteName, siteURL := range vars.FoundSites[username] {
-			// Estimate needed height to check for page breaks
-			// (A rough estimate is fine, can be tuned)
 			estimatedHeight := 20.0 // Base height for site + URL
 			if _, ok := vars.DeepScanResults[username][siteName]; ok {
 				estimatedHeight += 25.0 // Add space for deep scan info
 			}
 
-			// Check if we need to add a new page
 			if pdf.GetY()+estimatedHeight > (pageHeight - pageMargin) {
 				pdf.AddPage()
 				drawHeader()
 				drawTableHeader()
 			}
 
-			// Store Y position to draw a bounding box for the whole entry
 			startY := pdf.GetY()
 			pdf.SetX(pageMargin)
 
-			// --- Site Name Column ---
 			pdf.SetFont("Arial", "B", 11)
 			pdf.SetTextColor(primaryTextColor.r, primaryTextColor.g, primaryTextColor.b)
-			// Use MultiCell for the site name for consistency and to prevent overflow
 			pdf.MultiCell(siteColWidth, 10, siteName, "L", "L", false)
 
 			// --- Details Column ---
-			endYSite := pdf.GetY()              // Remember where the site name cell ended
-			pdf.SetY(startY)                    // Reset Y to the top of the row
-			pdf.SetX(pageMargin + siteColWidth) // Move to the start of the second column
+			endYSite := pdf.GetY()
+			pdf.SetY(startY)
+			pdf.SetX(pageMargin + siteColWidth)
 
-			// Profile URL
 			pdf.SetFont("Courier", "", 9)
 			pdf.SetTextColor(accentColor.r, accentColor.g, accentColor.b)
-			// Use a MultiCell with a right border for the details
 			pdf.MultiCell(0, 5, siteURL, "R", "L", false)
-			pdf.SetX(pageMargin + siteColWidth) // Reset X position after MultiCell
+			pdf.SetX(pageMargin + siteColWidth)
 
 			// Deep Scan Results
 			if deepResult, ok := vars.DeepScanResults[username][siteName]; ok {
@@ -255,7 +244,9 @@ func OutputPDF() {
 						continue
 					}
 
-					fieldName := strings.Title(strings.ReplaceAll(strings.Split(typ.Field(i).Tag.Get("json"), ",")[0], "_", " "))
+					caser := cases.Title(language.English)
+
+					fieldName := caser.String(strings.ReplaceAll(strings.Split(typ.Field(i).Tag.Get("json"), ",")[0], "_", " "))
 					var fieldValue string
 
 					switch f := field.Elem().Interface().(type) {
