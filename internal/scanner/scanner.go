@@ -26,6 +26,8 @@ import (
 	"github.com/gen2brain/beeep"
 	"github.com/schollz/progressbar/v3"
 	"golang.org/x/net/publicsuffix"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"resty.dev/v3"
 )
 
@@ -473,7 +475,11 @@ func CompleteScanning() {
 				}
 				if len(deepScanData.NonDefinedActions) > 0 {
 					for _, action := range deepScanData.NonDefinedActions {
-						printer.Info("  %s: %s", action.Name, action.Value)
+						caser := cases.Title(language.English)
+						actionName := strings.ReplaceAll(action.Name, "_", " ")
+						actionName = strings.TrimSpace(actionName)
+						actionName = caser.String(actionName)
+						printer.Info("  %s: %s", actionName, action.Value)
 					}
 				}
 			}
@@ -640,7 +646,7 @@ func performDeepScan(body string, config vars.DeepScanDomain) vars.DeepScanResul
 		// Apply actions
 		for _, action := range target.Actions {
 			if action.Type == "ignore_contains" && strings.Contains(text, action.Value) {
-				text = "" // Clear the text if it contains the ignored value
+				text = ""
 				break
 			}
 		}

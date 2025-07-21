@@ -15,7 +15,7 @@
         "actions": [
           {
             "type": "ignore_contains",
-            "value": "is the username of a TikTok creator"
+            "value": "of a TikTok creator named"
           }
         ]
       },
@@ -58,6 +58,14 @@
       {
         "name": "description",
         "selector": "span.profile-about-content-text.ng-binding.linkify"
+      }
+    ]
+  },
+  "venmo.com": {
+    "targets": [
+      {
+        "name": "real_name",
+        "selector": "p.profileInfo_username__LcxO_"
       }
     ]
   }
