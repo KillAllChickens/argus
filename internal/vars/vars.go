@@ -8,7 +8,7 @@ import (
 	"github.com/KillAllChickens/argus/internal/printer"
 )
 
-var Version string = "v0.1.0"
+var Version string = "v0.1.2"
 
 // Deep Scan Resutl struct
 type DeepScanResult struct {
@@ -123,8 +123,6 @@ func InitConfVars() {
 			// Handle error, maybe log it and disable deep scanning
 			printer.Error("Could not import deepscan.json, continuing without deep scanning")
 			DeepScanEnabled = false
-		} else {
-			DeepScanEnabled = true
 		}
 	} else {
 		DeepScanEnabled = false
