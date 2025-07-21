@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"math"
 	"os"
 	"path/filepath"
 	"reflect"
@@ -28,6 +29,11 @@ type outputJSONStruct struct {
 	Username  string                    `json:"username"`
 	Timestamp string                    `json:"timestamp"`
 	Results   map[string]jsonSiteResult `json:"sites"`
+}
+
+// for pdf file
+type color struct {
+	r, g, b int
 }
 
 func OutputJSON() {
@@ -61,13 +67,13 @@ func OutputHTML() {
 		tpl := io.GetConfigFile("html_template.html")
 
 		data := map[string]any{
-			"Username":  username,
-			"Sites":     vars.FoundSites[username],
-			"PFPs":      vars.FoundPFPs[username],
+			"Username":        username,
+			"Sites":           vars.FoundSites[username],
+			"PFPs":            vars.FoundPFPs[username],
 			"DeepScanEnabled": vars.DeepScanEnabled,
-			"DeepScans": vars.DeepScanResults[username],
-			"Timestamp": time.Now().Format("2006-01-02 15:04:05"),
-			"Version":   vars.Version,
+			"DeepScans":       vars.DeepScanResults[username],
+			"Timestamp":       time.Now().Format("2006-01-02 15:04:05"),
+			"Version":         vars.Version,
 		}
 
 		funcMap := template.FuncMap{
@@ -152,47 +158,104 @@ func OutputText() {
 }
 
 func OutputPDF() {
+	// Define a more professional color palette and layout constants
+	const (
+		pageMargin   = 10.0
+		pageWidth    = 210.0
+		pageHeight   = 297.0
+		cardPadding  = 5.0
+		siteColWidth = 45.0
+	)
+
+	headerBgColor := color{226, 232, 240} // Light Slate Gray
+	headerTextColor := color{40, 40, 40}
+	// borderColor := color{203, 213, 225} // Slate
+	primaryTextColor := color{23, 23, 23}
+	secondaryTextColor := color{100, 116, 139} // Lighter Slate for URLs
+	accentColor := color{37, 99, 235}          // Blue for links/headers
+
 	for _, username := range vars.Usernames {
 		pdf := gofpdf.New("P", "mm", "A4", "")
-		defer pdf.Close()
-
+		pdf.SetMargins(pageMargin, pageMargin, pageMargin)
 		pdf.AddPage()
-		pdf.SetFont("Arial", "B", 18)
-		pdf.CellFormat(0, 15, "Argus Scan Results for "+username, "", 1, "C", false, 0, "")
 
-		pdf.SetFont("Arial", "", 12)
-		pdf.SetTextColor(40, 40, 40)
-		pdf.CellFormat(0, 10, "Timestamp: "+time.Now().Format("2006-01-02 15:04:05"), "", 1, "C", false, 0, "")
-		pdf.Ln(5)
+		// --- Reusable Header Function ---
+		drawHeader := func() {
+			pdf.SetFont("Arial", "B", 20)
+			pdf.SetTextColor(headerTextColor.r, headerTextColor.g, headerTextColor.b)
+			pdf.CellFormat(0, 15, "Argus Scan Results", "", 1, "C", false, 0, "")
 
-		// Table header
-		pdf.SetFont("Arial", "B", 14)
-		pdf.SetFillColor(226, 232, 240) // light blue/gray fill
-		pdf.CellFormat(45, 10, "Site", "1", 0, "C", true, 0, "")
-		pdf.CellFormat(0, 10, "Profile URL & Deep Scan Details", "1", 1, "C", true, 0, "")
-
-		pdf.SetFont("Arial", "", 12)
-		pdf.SetTextColor(0, 0, 0)
-
-		// Loop through sites and add their deep scan results.
-		for siteName, siteURL := range vars.FoundSites[username] {
-			pdf.CellFormat(45, 10, siteName, "1", 0, "L", false, 0, "")
-			pdf.SetFont("Courier", "", 10)
-			pdf.CellFormat(0, 10, siteURL, "1", 1, "L", false, 0, siteURL)
 			pdf.SetFont("Arial", "", 12)
+			pdf.SetTextColor(secondaryTextColor.r, secondaryTextColor.g, secondaryTextColor.b)
+			pdf.CellFormat(0, 10, "Username: "+username, "", 0, "L", false, 0, "")
+			pdf.CellFormat(0, 10, "Timestamp: "+time.Now().Format("2006-01-02 15:04:05"), "", 1, "R", false, 0, "")
+			pdf.Ln(8)
+		}
 
-			// Check for and append deep scan results
+		// --- Table Header ---
+		drawTableHeader := func() {
+			pdf.SetFont("Arial", "B", 12)
+			pdf.SetFillColor(headerBgColor.r, headerBgColor.g, headerBgColor.b)
+			pdf.SetTextColor(headerTextColor.r, headerTextColor.g, headerTextColor.b)
+			pdf.CellFormat(siteColWidth, 10, "Site", "1", 0, "C", true, 0, "")
+			pdf.CellFormat(0, 10, "Details", "1", 1, "C", true, 0, "")
+		}
+
+		// Initial drawing of headers
+		drawHeader()
+		drawTableHeader()
+
+		// --- Loop through sites and render results ---
+		for siteName, siteURL := range vars.FoundSites[username] {
+			// Estimate needed height to check for page breaks
+			// (A rough estimate is fine, can be tuned)
+			estimatedHeight := 20.0 // Base height for site + URL
+			if _, ok := vars.DeepScanResults[username][siteName]; ok {
+				estimatedHeight += 25.0 // Add space for deep scan info
+			}
+
+			// Check if we need to add a new page
+			if pdf.GetY()+estimatedHeight > (pageHeight - pageMargin) {
+				pdf.AddPage()
+				drawHeader()
+				drawTableHeader()
+			}
+
+			// Store Y position to draw a bounding box for the whole entry
+			startY := pdf.GetY()
+			pdf.SetX(pageMargin)
+
+			// --- Site Name Column ---
+			pdf.SetFont("Arial", "B", 11)
+			pdf.SetTextColor(primaryTextColor.r, primaryTextColor.g, primaryTextColor.b)
+			// Use MultiCell for the site name for consistency and to prevent overflow
+			pdf.MultiCell(siteColWidth, 10, siteName, "L", "L", false)
+
+			// --- Details Column ---
+			endYSite := pdf.GetY()              // Remember where the site name cell ended
+			pdf.SetY(startY)                    // Reset Y to the top of the row
+			pdf.SetX(pageMargin + siteColWidth) // Move to the start of the second column
+
+			// Profile URL
+			pdf.SetFont("Courier", "", 9)
+			pdf.SetTextColor(accentColor.r, accentColor.g, accentColor.b)
+			// Use a MultiCell with a right border for the details
+			pdf.MultiCell(0, 5, siteURL, "R", "L", false)
+			pdf.SetX(pageMargin + siteColWidth) // Reset X position after MultiCell
+
+			// Deep Scan Results
 			if deepResult, ok := vars.DeepScanResults[username][siteName]; ok {
+				pdf.Ln(2) // Add a little space
 				val := reflect.ValueOf(deepResult)
 				typ := val.Type()
 
 				for i := 0; i < val.NumField(); i++ {
 					field := val.Field(i)
 					if field.IsNil() {
-						continue // Skip empty fields
+						continue
 					}
 
-					fieldName := strings.ReplaceAll(strings.Split(typ.Field(i).Tag.Get("json"), ",")[0], "_", " ")
+					fieldName := strings.Title(strings.ReplaceAll(strings.Split(typ.Field(i).Tag.Get("json"), ",")[0], "_", " "))
 					var fieldValue string
 
 					switch f := field.Elem().Interface().(type) {
@@ -203,27 +266,37 @@ func OutputPDF() {
 					case []string:
 						fieldValue = strings.Join(f, ", ")
 					case []vars.NonDefinedAction:
-						var nonDefinedStrs []string
+						var parts []string
 						for _, action := range f {
-							nonDefinedStrs = append(nonDefinedStrs, fmt.Sprintf("%s: %s", action.Name, action.Value))
+							parts = append(parts, fmt.Sprintf("%s: %s", action.Name, action.Value))
 						}
-						fieldValue = strings.Join(nonDefinedStrs, "; ")
+						fieldValue = strings.Join(parts, "; ")
 					default:
 						continue
 					}
 
 					if fieldValue != "" {
-						pdf.SetX(pdf.GetX() + 45) // Indent
-						pdf.SetFont("Arial", "B", 10)
-						pdf.CellFormat(35, 8, strings.Title(fieldName)+":", "L", 0, "L", false, 0, "")
-						pdf.SetFont("Arial", "", 10)
-						pdf.MultiCell(0, 8, fieldValue, "R", "L", false)
+						pdf.SetX(pageMargin + siteColWidth + cardPadding) // Indent deep scan details
+
+						// Field Name (e.g., "Real Name:")
+						pdf.SetFont("Arial", "B", 9)
+						pdf.SetTextColor(primaryTextColor.r, primaryTextColor.g, primaryTextColor.b)
+						pdf.CellFormat(30, 5, fieldName+":", "", 0, "L", false, 0, "")
+
+						// Field Value
+						pdf.SetFont("Arial", "", 9)
+						pdf.SetTextColor(secondaryTextColor.r, secondaryTextColor.g, secondaryTextColor.b)
+						pdf.MultiCell(0, 5, fieldValue, "R", "L", false)
+						pdf.SetX(pageMargin + siteColWidth)
 					}
 				}
-				// Draw bottom border for the entire row block
-				pdf.Line(pdf.GetX(), pdf.GetY(), 200, pdf.GetY())
-
 			}
+
+			// Determine the final height of the row block and draw the bottom border
+			endYDetails := pdf.GetY()
+			finalY := math.Max(endYSite, endYDetails)
+			pdf.SetY(finalY)
+			pdf.Line(pageMargin, finalY, pageWidth-pageMargin, finalY)
 		}
 
 		var buf bytes.Buffer
