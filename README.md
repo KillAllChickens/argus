@@ -20,17 +20,18 @@ For better accuracy, Argus Panoptes can use Google Gemini to filter out false po
 <details>
 <summary>Table of Contents</summary>
 
-- [✨ Features](#-features)
-- [🛠️ Installation](#-installation)
-  - [Linux](#linux)
-  - [Windows](#windows)
-- [Usage](#usage)
-  - [Configuration](#configuration)
-  - [Scanning](#scanning)
-- [📝 Usernames](#-usernames)
-  - [Command-Line Usernames](#command-line-usernames)
-  - [Username Files](#username-files)
+  - [✨ Features](#-features)
+  - [🛠️ Installation](#-installation)
+    - [Linux](#linux)
+    - [Windows](#windows)
+  - [Usage](#usage)
+    - [Configuration](#configuration)
+    - [Scanning](#scanning)
+  - [📝 Usernames](#-usernames)
+    - [Command-Line Usernames](#command-line-usernames)
+    - [Username Files](#username-files)
 - [🚧 Planned Features](#-planned-features)
+  - [Finished](#finished)
 
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
