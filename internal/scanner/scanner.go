@@ -96,10 +96,11 @@ func StartScan(usernames []string) {
 			for _, proxy := range vars.Proxies {
 				proxyTest := testProxy(proxy)
 				if proxyTest { // Proxy works as expected
-					client.SetProxy(proxy)
+					printer.Success("Proxy %s works!", proxy)
 				} else {
-					printer.Error("Your proxy list appears to contain broken proxies.")
-					os.Exit(1)
+					printer.Error("%s is an invalid proxy, removing from list and continuing.", proxy)
+					remove(vars.Proxies, proxy)
+					continue
 				}
 			}
 		} else {
@@ -181,6 +182,9 @@ func initBadRedirects() {
 	helpers.HandleErr(err)
 	fileContent, _ := io.NewlineSeperatedFileToArray(checkfilepath)
 	badRedirects = fileContent
+	for i, badRedirect := range badRedirects {
+		badRedirects[i] = normalizeURL(badRedirect)
+	}
 }
 
 func Init(CustomConfigPath string) {
@@ -219,7 +223,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 			mtx.Unlock()
 		}
 		for _, badRedirect := range badRedirects {
-			if flexibleURLContains(req.URL.String(), badRedirect) {
+			if normalizeURL(req.URL.String()) == strings.ReplaceAll(badRedirect, "{U}", username) {
 				if vars.Verbose {
 					mtx.Lock()
 					_ = bar.Clear()
@@ -563,41 +567,27 @@ func compExit() {
 	os.Exit(0)
 }
 
-func flexibleURLContains(fullURL, checkURL string) bool {
+func normalizeURL(fullURL string) string {
 	u1, err := url.Parse(fullURL)
 	if err != nil {
-		return false
-	}
-	u2, err := url.Parse(checkURL)
-	if err != nil {
-		return false
+		return ""
 	}
 
 	host1 := strings.TrimPrefix(strings.ToLower(u1.Host), "www.")
-	host2 := strings.TrimPrefix(strings.ToLower(u2.Host), "www.")
 
 	path1 := strings.TrimRight(u1.Path, "/")
-	path2 := strings.TrimRight(u2.Path, "/")
 
 	if path1 == "" {
 		path1 = "/"
 	}
-	if path2 == "" {
-		path2 = "/"
-	}
-
 	normalizedFull := host1 + path1
 	if u1.RawQuery != "" {
 		normalizedFull += "?" + u1.RawQuery
 	}
 
-	normalizedCheck := host2 + path2
-	if u2.RawQuery != "" {
-		normalizedCheck += "?" + u2.RawQuery
-	}
-
-	return strings.Contains(normalizedFull, normalizedCheck)
+	return normalizedFull
 }
+
 
 func testProxy(proxyAddr string) bool {
 	client := resty.New()
@@ -675,4 +665,14 @@ func performDeepScan(body string, config vars.DeepScanDomain) vars.DeepScanResul
 	}
 
 	return result
+}
+
+func remove[T comparable](l []T, item T) []T {
+	out := make([]T, 0)
+	for _, element := range l {
+		if element != item {
+			out = append(out, element)
+		}
+	}
+	return out
 }

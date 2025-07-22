@@ -1,11 +1,11 @@
 # This file contains a list of URLs to check for on a redirect
-# If the request is redirected to a URL that contains one of these strings
+# If the request is redirected to a URL that equals one of these strings
 # The request will be aborted and that site will be considered "Not found"
 # Seperated by newlines, empty lines are ignored, and # are comments
+# {U} will be replaced by the username being scanned
 
-https://psnprofiles.com?psnId=
+https://psnprofiles.com?psnId={U}
 
-wordpress.com/typo/?subdomain=
+https://wordpress.com/typo/?subdomain={U}
 
-
-#SP:cracked.com
+https://player.me/
