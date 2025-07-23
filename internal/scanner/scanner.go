@@ -479,11 +479,8 @@ func CompleteScanning() {
 				}
 				if len(deepScanData.NonDefinedActions) > 0 {
 					for _, action := range deepScanData.NonDefinedActions {
-						caser := cases.Title(language.English)
-						actionName := strings.ReplaceAll(action.Name, "_", " ")
-						actionName = strings.TrimSpace(actionName)
-						actionName = caser.String(actionName)
-						printer.Info("  %s: %s", actionName, action.Value)
+
+						printer.Info("  %s: %s", action.Name, action.Value)
 					}
 				}
 			}
@@ -588,7 +585,6 @@ func normalizeURL(fullURL string) string {
 	return normalizedFull
 }
 
-
 func testProxy(proxyAddr string) bool {
 	client := resty.New()
 	client.SetProxy(proxyAddr)
@@ -660,7 +656,11 @@ func performDeepScan(body string, config vars.DeepScanDomain) vars.DeepScanResul
 		case "real_name":
 			result.RealName = &text
 		default:
-			result.NonDefinedActions = append(result.NonDefinedActions, vars.NonDefinedAction{Name: target.Name, Value: text})
+			caser := cases.Title(language.English)
+			actionName := strings.ReplaceAll(target.Name, "_", " ")
+			actionName = strings.TrimSpace(actionName)
+			actionName = caser.String(actionName)
+			result.NonDefinedActions = append(result.NonDefinedActions, vars.NonDefinedAction{Name: actionName, Value: text})
 		}
 	}
 
