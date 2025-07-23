@@ -20,7 +20,7 @@ if /I "%PROCESSOR_ARCHITECTURE%" == "AMD64" (
 echo [*] Target: %GOOS%/%GOARCH%
 
 
-go install .
+go install -ldflags="-s -w" .
 if %errorlevel% neq 0 (
     echo [!] Build failed. Check the errors above.
     goto :eof

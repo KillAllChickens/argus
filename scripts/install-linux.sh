@@ -17,7 +17,7 @@ fi
 
 go version | awk '{print $3}' | sed 's/go//;s/\.[0-9]*$//' | xargs -I{} sed -i "s/^go .*/go {}/" go.mod
 
-GOOS=$GOOS GOARCH=$GOARCH go build -o "$APP_NAME" .
+GOOS=$GOOS GOARCH=$GOARCH go build -o "$APP_NAME" -ldflags="-s -w" .
 
 echo "[*] Ensuring $INSTALL_DIR exists..."
 mkdir -p "$INSTALL_DIR"
