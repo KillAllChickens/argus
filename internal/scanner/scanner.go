@@ -223,7 +223,7 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 			mtx.Unlock()
 		}
 		for _, badRedirect := range badRedirects {
-			if normalizeURL(req.URL.String()) == strings.ReplaceAll(badRedirect, "{U}", username) {
+			if strings.ToLower(normalizeURL(req.URL.String())) == strings.ReplaceAll(badRedirect, "{U}", strings.ToLower(username)) {
 				if vars.Verbose {
 					mtx.Lock()
 					_ = bar.Clear()

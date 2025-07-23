@@ -60,5 +60,21 @@
         "selector": ".header-metadata-item:nth-child(1) .header-metadata-display a"
       }
     ]
+  },
+  "about.me": {
+    "targets": [
+      {
+        "name": "real_name",
+        "selector": "h1.name"
+      },
+      {
+        "name": "location",
+        "selector": "span.location span.location"
+      },
+      {
+        "name": "description",
+        "selector": "section.bio.inset div p"
+      }
+    ]
   }
 }
