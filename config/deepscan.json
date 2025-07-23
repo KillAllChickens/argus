@@ -41,26 +41,6 @@
       }
     ]
   },
-  "roblox.com": {
-    "targets": [
-      {
-        "name": "friends",
-        "selector": "a[href*='friends#!/friends'] b"
-      },
-      {
-        "name": "follower_count",
-        "selector": "a[href*='friends#!/followers'] b"
-      },
-      {
-        "name": "following_count",
-        "selector": "a[href*='friends#!/following'] b"
-      },
-      {
-        "name": "description",
-        "selector": "span.profile-about-content-text.ng-binding.linkify"
-      }
-    ]
-  },
   "venmo.com": {
     "targets": [
       {

@@ -114,41 +114,56 @@ func OutputText() {
 		for siteName, siteURL := range vars.FoundSites[username] {
 			fullText += fmt.Sprintf("[+] %-14s => %-45s\n", siteName, siteURL)
 
-			// Check for and append deep scan results.
 			if deepResult, ok := vars.DeepScanResults[username][siteName]; ok {
-				// Use reflection to iterate through the fields of the DeepScanResult struct.
 				val := reflect.ValueOf(deepResult)
 				typ := val.Type()
 				for i := 0; i < val.NumField(); i++ {
 					field := val.Field(i)
 					if field.IsNil() {
-						continue // Skip empty/nil fields
-					}
-
-					// Get the field name from the json tag for cleaner output.
-					fieldName := strings.Split(typ.Field(i).Tag.Get("json"), ",")[0]
-
-					var fieldValue string
-					// Handle different types of fields.
-					switch f := field.Elem().Interface().(type) {
-					case string:
-						fieldValue = f
-					case int:
-						fieldValue = strconv.Itoa(f)
-					case []string:
-						fieldValue = strings.Join(f, ", ")
-					case []vars.NonDefinedAction:
-						var nonDefinedStrs []string
-						for _, action := range f {
-							nonDefinedStrs = append(nonDefinedStrs, fmt.Sprintf("%s: %s", action.Name, action.Value))
-						}
-						fieldValue = strings.Join(nonDefinedStrs, "; ")
-					default:
 						continue
 					}
 
-					if fieldValue != "" {
-						fullText += fmt.Sprintf("  - %-18s: %s\n", strings.ReplaceAll(fieldName, "_", " "), fieldValue)
+					if field.Kind() == reflect.Ptr {
+						if field.IsNil() {
+							continue
+						}
+						field = field.Elem()
+					}
+
+					if field.IsZero() {
+						continue
+					}
+
+					fieldName := strings.Split(typ.Field(i).Tag.Get("json"), ",")[0]
+					caser := cases.Title(language.English)
+
+					var fieldValue string
+					if actions, ok := field.Interface().([]vars.NonDefinedAction); ok {
+						for _, action := range actions {
+							fieldName := caser.String(strings.ReplaceAll(action.Name, "_", " "))
+							fullText += fmt.Sprintf("  - %-18s: %s\n", fieldName, action.Value)
+						}
+					} else {
+						switch f := field.Interface().(type) {
+						case string:
+							fieldValue = f
+						case int:
+							fieldValue = strconv.Itoa(f)
+						case []string:
+							fieldValue = strings.Join(f, ", ")
+						case []vars.NonDefinedAction:
+							var nonDefinedStrs []string
+							for _, action := range f {
+								nonDefinedStrs = append(nonDefinedStrs, fmt.Sprintf("%s: %s", action.Name, action.Value))
+							}
+							fieldValue = strings.Join(nonDefinedStrs, "; ")
+						default:
+							continue
+						}
+						if fieldValue != "" {
+							fieldName = caser.String(strings.ReplaceAll(fieldName, "_", " "))
+							fullText += fmt.Sprintf("  - %-18s: %s\n", fieldName, fieldValue)
+						}
 					}
 				}
 			}
@@ -203,6 +218,25 @@ func OutputPDF() {
 		drawHeader()
 		drawTableHeader()
 
+		drawDetailRow := func(name, value string) {
+			if value == "" {
+				return // Don't draw empty rows
+			}
+
+			pdf.SetX(pageMargin + siteColWidth + cardPadding) // Indent details
+
+			// Field Name (e.g., "Real Name:")
+			pdf.SetFont("Arial", "B", 9)
+			pdf.SetTextColor(primaryTextColor.r, primaryTextColor.g, primaryTextColor.b)
+			pdf.CellFormat(30, 5, name+":", "", 0, "L", false, 0, "")
+
+			// Field Value
+			pdf.SetFont("Arial", "", 9)
+			pdf.SetTextColor(secondaryTextColor.r, secondaryTextColor.g, secondaryTextColor.b)
+			pdf.MultiCell(0, 5, value, "", "L", false) // Removed "R" border to look clean
+			pdf.SetX(pageMargin + siteColWidth)
+		}
+
 		for siteName, siteURL := range vars.FoundSites[username] {
 			estimatedHeight := 20.0 // Base height for site + URL
 			if _, ok := vars.DeepScanResults[username][siteName]; ok {
@@ -234,13 +268,20 @@ func OutputPDF() {
 
 			// Deep Scan Results
 			if deepResult, ok := vars.DeepScanResults[username][siteName]; ok {
-				pdf.Ln(2) // Add a little space
+				pdf.Ln(2)
 				val := reflect.ValueOf(deepResult)
 				typ := val.Type()
 
 				for i := 0; i < val.NumField(); i++ {
 					field := val.Field(i)
-					if field.IsNil() {
+					if field.Kind() == reflect.Ptr {
+						if field.IsNil() {
+							continue
+						}
+						field = field.Elem()
+					}
+
+					if field.IsZero() {
 						continue
 					}
 
@@ -248,37 +289,33 @@ func OutputPDF() {
 
 					fieldName := caser.String(strings.ReplaceAll(strings.Split(typ.Field(i).Tag.Get("json"), ",")[0], "_", " "))
 					var fieldValue string
-
-					switch f := field.Elem().Interface().(type) {
-					case string:
-						fieldValue = f
-					case int:
-						fieldValue = strconv.Itoa(f)
-					case []string:
-						fieldValue = strings.Join(f, ", ")
-					case []vars.NonDefinedAction:
-						var parts []string
-						for _, action := range f {
-							parts = append(parts, fmt.Sprintf("%s: %s", action.Name, action.Value))
+					if actions, ok := field.Interface().([]vars.NonDefinedAction); ok {
+						// This is our special slice. Loop through each item inside it.
+						for _, action := range actions {
+							// Use the action's Name and Value directly as the row data.
+							// The Name doesn't come from a json tag here.
+							fieldName := caser.String(strings.ReplaceAll(action.Name, "_", " "))
+							drawDetailRow(fieldName, action.Value)
 						}
-						fieldValue = strings.Join(parts, "; ")
-					default:
-						continue
-					}
+					} else {
+						switch f := field.Interface().(type) {
+						case string:
+							fieldValue = f
+						case int:
+							fieldValue = strconv.Itoa(f)
+						case []string:
+							fieldValue = strings.Join(f, ", ")
+						case []vars.NonDefinedAction:
+							var parts []string
+							for _, action := range f {
+								parts = append(parts, fmt.Sprintf("%s: %s", action.Name, action.Value))
+							}
+							fieldValue = strings.Join(parts, ", ")
+						default:
+							continue
+						}
 
-					if fieldValue != "" {
-						pdf.SetX(pageMargin + siteColWidth + cardPadding) // Indent deep scan details
-
-						// Field Name (e.g., "Real Name:")
-						pdf.SetFont("Arial", "B", 9)
-						pdf.SetTextColor(primaryTextColor.r, primaryTextColor.g, primaryTextColor.b)
-						pdf.CellFormat(30, 5, fieldName+":", "", 0, "L", false, 0, "")
-
-						// Field Value
-						pdf.SetFont("Arial", "", 9)
-						pdf.SetTextColor(secondaryTextColor.r, secondaryTextColor.g, secondaryTextColor.b)
-						pdf.MultiCell(0, 5, fieldValue, "R", "L", false)
-						pdf.SetX(pageMargin + siteColWidth)
+						drawDetailRow(fieldName, fieldValue)
 					}
 				}
 			}

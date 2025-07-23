@@ -234,16 +234,12 @@
                                     </ul>
                                 </li>
                                 {{ end }} {{ with $deepScan.NonDefinedActions }}
-                                <li>
-                                    <strong>Other Details:</strong>
-                                    <ul>
+
                                         {{ range . }}
                                         <li>
-                                            <strong>{{ .Name }}:</strong> {{
-                                            .Value }}
+                                            <strong>{{ .Name }}:</strong> {{ .Value }}
                                         </li>
                                         {{ end }}
-                                    </ul>
                                 </li>
                                 {{ end }}
                             </ul>
@@ -258,8 +254,7 @@
             </table>
             <footer>
                 <p>
-                    Report generated on {{ .Timestamp }} with Argus {{ .Version
-                    }}
+                    Report generated on {{ .Timestamp }} with Argus {{ .Version }}
                 </p>
             </footer>
         </main>
