@@ -130,7 +130,7 @@ https://dlive.tv/{U}
 https://{U}.dreamwidth.org
 #https://ello.co/{U}
 https://www.eyeem.com/u/{U}
-https://www.faceit.com/en/players/{U}
+#https://www.faceit.com/en/players/{U}
 https://community.fandom.com/wiki/User:{U}
 https://gab.com/{U}
 https://gamejolt.com/@{U}
@@ -171,3 +171,12 @@ https://anilist.co/user/{U}/
 https://retroachievements.org/user/{U}
 https://www.hackthebox.com/profile/{U}
 https://ultimate-guitar.com/u/{U}
+https://www.shadertoy.com/user/{U}
+https://lobste.rs/~{U}
+https://tap.bio/@{U}
+https://{U}.neocities.org
+https://www.artbreeder.com/{U}
+https://www.bandlab.com/{U}
+https://www.buzzfeed.com/{U}
+https://pypi.org/user/{U}/
+https://www.zillow.com/profile/{U}

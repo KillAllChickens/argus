@@ -38,7 +38,7 @@ For better accuracy, Argus Panoptes can use Google Gemini to filter out false po
 
 ## ✨ Features
 
-- 🚀 **Blazing Fast, Multi-threaded Scanning:** In testing, single username scans across **160+ sites** completed in under **5 seconds**.
+- 🚀 **Blazing Fast, Multi-threaded Scanning:** In testing, single username scans across **170+ sites** completed in under **5 seconds**.
   - **Note:** Enabling AI-powered scanning will limit the thread count to **5** to prevent rate-limiting, which will result in a significant slowdown.
 - 🤖 **AI-Powered False Positive Detection:** Uses Google Gemini for more accurate identification of user profiles.
 - 🔧 **Highly Customizable:** Tailor the site list, user agents, soft 404 detection, and even the ASCII art to your preferences.

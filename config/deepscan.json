@@ -76,5 +76,13 @@
         "selector": "section.bio.inset div p"
       }
     ]
+  },
+  "snapchat.com": {
+    "targets": [
+      {
+        "name": "real_name",
+        "selector": "h4.Heading_h400Emphasis__SQXxl span.UserDetailsCard_title__K9Awz.UserDetailsCard_oneLineTruncation__z0qou"
+      }
+    ]
   }
 }
