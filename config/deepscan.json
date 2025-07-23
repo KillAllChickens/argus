@@ -68,5 +68,17 @@
         "selector": "p.profileInfo_username__LcxO_"
       }
     ]
+  },
+  "last.fm": {
+    "targets": [
+      {
+        "name": "real_name",
+        "selector": "span.header-title-display-name"
+      },
+      {
+        "name": "scrobble_count",
+        "selector": ".header-metadata-item:nth-child(1) .header-metadata-display a"
+      }
+    ]
   }
 }
