@@ -50,7 +50,7 @@ func main() {
 		},
 		Before: func(ctx context.Context, cmd *cli.Command) (context.Context, error) {
 			vars.Verbose = cmd.Bool("verbose")
-			cmd.String("config-path")
+			// cmd.String("config-path")
 			// vars.AI = cmd.Bool("ai")
 			return nil, nil
 		},
