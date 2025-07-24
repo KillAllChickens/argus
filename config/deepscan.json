@@ -84,5 +84,13 @@
         "selector": "h4.Heading_h400Emphasis__SQXxl span.UserDetailsCard_title__K9Awz.UserDetailsCard_oneLineTruncation__z0qou"
       }
     ]
+  },
+  "zillow.com": {
+    "targets": [
+      {
+        "name": "real_name",
+        "selector": "h1.Text-c11n-8-107-0__sc-aiai24-0.StyledHeading-c11n-8-107-0__sc-s7fcif-0.gmdEgd"
+      }
+    ]
   }
 }
