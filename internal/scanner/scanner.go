@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -21,6 +22,7 @@ import (
 	"github.com/KillAllChickens/argus/internal/printer"
 	"github.com/KillAllChickens/argus/internal/shared"
 	"github.com/KillAllChickens/argus/internal/vars"
+	"github.com/dustin/go-humanize"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gen2brain/beeep"
@@ -223,7 +225,9 @@ func FetchSource(client *resty.Client, username string, source string, bar *prog
 			mtx.Unlock()
 		}
 		for _, badRedirect := range badRedirects {
-			if strings.ToLower(normalizeURL(req.URL.String())) == strings.ReplaceAll(badRedirect, "{U}", strings.ToLower(username)) {
+			// printer.Info("Checking redirect: %s against %s", strings.ToLower(strings.ReplaceAll(badRedirect, "{U}", strings.ToLower(username))), strings.ToLower(normalizeURL(req.URL.String())))
+			// if strings.ToLower(normalizeURL(req.URL.String())) == strings.ToLower(strings.ReplaceAll(badRedirect, "{U}", username)) {
+			if strings.EqualFold(normalizeURL(req.URL.String()), strings.ReplaceAll(badRedirect, "{U}", username)) {
 				if vars.Verbose {
 					mtx.Lock()
 					_ = bar.Clear()
@@ -469,18 +473,17 @@ func CompleteScanning() {
 					printer.Info("  Description: %s", *deepScanData.Description)
 				}
 				if deepScanData.FollowerCount != nil {
-					printer.Info("  Followers: %d", *deepScanData.FollowerCount)
+					printer.Info("  Followers: %s", humanize.Comma(int64(*deepScanData.FollowerCount)))
 				}
 				if deepScanData.FollowingCount != nil {
-					printer.Info("  Following: %d", *deepScanData.FollowingCount)
+					printer.Info("  Following: %s", humanize.Comma(int64(*deepScanData.FollowingCount)))
 				}
 				if deepScanData.RealName != nil {
 					printer.Info("  Real Name: %s", *deepScanData.RealName)
 				}
 				if len(deepScanData.NonDefinedActions) > 0 {
 					for _, action := range deepScanData.NonDefinedActions {
-
-						printer.Info("  %s: %s", action.Name, action.Value)
+						printer.Info("  %s: %s", action.Name, humanizeIfInt(action.Value))
 					}
 				}
 			}
@@ -675,4 +678,12 @@ func remove[T comparable](l []T, item T) []T {
 		}
 	}
 	return out
+}
+
+func humanizeIfInt(s string) string {
+	n, err := strconv.Atoi(s)
+	if err != nil {
+		return s
+	}
+	return humanize.Comma(int64(n))
 }

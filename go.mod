@@ -5,6 +5,7 @@ go 1.24
 require (
 	github.com/Code-Hex/Neo-cowsay/v2 v2.0.4
 	github.com/PuerkitoBio/goquery v1.10.3
+	github.com/dustin/go-humanize v1.0.1
 	github.com/gen2brain/beeep v0.11.1
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/schollz/progressbar/v3 v3.18.0
