@@ -11,3 +11,5 @@ https://wordpress.com/typo/?subdomain={U}
 https://player.me/
 
 https://www.zillow.com/professionals/real-estate-agent-reviews/
+
+https://www.pinterest.com/?show_error=true

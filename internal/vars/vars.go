@@ -121,7 +121,8 @@ func InitConfVars() {
 		_, err = LoadAndStringifyJSON(deepScanConfigLocation, &DeepScanConfig)
 		if err != nil {
 			// Handle error, maybe log it and disable deep scanning
-			printer.Error("Could not import deepscan.json, continuing without deep scanning")
+			printer.Error("Could not import deepscan.json, continuing without deep scanning.")
+			printer.Info("If you made any changes to deepscan.json, please ensure your changes are valid.")
 			DeepScanEnabled = false
 		}
 	} else {

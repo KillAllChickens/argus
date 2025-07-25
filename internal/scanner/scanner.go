@@ -465,7 +465,10 @@ func GetMainDomain(rawURL string) (string, error) {
 func CompleteScanning() {
 	for _, username := range vars.Usernames {
 		// printer.Success("Found %d sites for %s!", len(vars.FoundSites[username]), username)
-		printer.Info("All sites for %s:", username)
+		if len(vars.FoundSites[username]) == 0 {
+			continue
+		}
+		printer.Info("Found %d sites for %s:", len(vars.FoundSites[username]), username)
 		for n, site := range vars.FoundSites[username] {
 			printer.Success("%-14s => %-45s", n, site)
 			if deepScanData, ok := vars.DeepScanResults[username][n]; ok {
@@ -637,6 +640,9 @@ func performDeepScan(body string, config vars.DeepScanDomain) vars.DeepScanResul
 			if action.Type == "ignore_contains" && strings.Contains(text, action.Value) {
 				text = ""
 				break
+			}
+			if action.Type == "remove_text" && strings.Contains(text, action.Value) {
+				text = strings.TrimSpace(strings.ReplaceAll(text, action.Value, ""))
 			}
 		}
 

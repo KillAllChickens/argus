@@ -92,5 +92,19 @@
         "selector": "h1.Text-c11n-8-107-0__sc-aiai24-0.StyledHeading-c11n-8-107-0__sc-s7fcif-0.gmdEgd"
       }
     ]
+  },
+  "spotify.com": {
+    "targets": [
+      {
+        "name": "playlist_count",
+        "selector": "span.e-91000-text.encore-text-body-small.encore-internal-color-text-subdued.w1TBi3o5CTM7zW1EB3Bm",
+        "actions": [
+          {
+            "type": "remove_text",
+            "value": " Public Playlists"
+          }
+        ]
+      }
+    ]
   }
 }
