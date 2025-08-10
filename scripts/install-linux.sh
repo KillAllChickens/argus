@@ -26,9 +26,33 @@ echo "[*] Installing to $INSTALL_DIR..."
 mv "$APP_NAME" "$INSTALL_DIR/$APP_NAME"
 
 if [[ ":$PATH:" != *":$INSTALL_DIR:"* ]]; then
-  echo "[!] $INSTALL_DIR is not in your PATH."
-  echo "    You can add it by adding this to your shell config:"
-  echo "    export PATH=\"$INSTALL_DIR:\$PATH\""
+  echo "[!] $INSTALL_DIR is not in your PATH. Adding it now..."
+
+  # Detect shell and append to correct file
+  SHELL_NAME=$(basename "$SHELL")
+  case "$SHELL_NAME" in
+      bash)
+          CONFIG_FILE="$HOME/.bashrc"
+          ;;
+      zsh)
+          CONFIG_FILE="$HOME/.zshrc"
+          ;;
+      fish)
+          CONFIG_FILE="$HOME/.config/fish/config.fish"
+          ;;
+      *)
+          CONFIG_FILE="$HOME/.profile"
+          ;;
+  esac
+
+  if [[ "$SHELL_NAME" == "fish" ]]; then
+      # Fish uses a different syntax
+      echo "set -gx PATH $INSTALL_DIR \$PATH" >> "$CONFIG_FILE"
+  else
+      echo "export PATH=\"$INSTALL_DIR:\$PATH\"" >> "$CONFIG_FILE"
+  fi
+
+  echo "[✔] Added $INSTALL_DIR to PATH in $CONFIG_FILE. Restart your shell to apply."
 else
   echo -e "\n\n[✔] Installed! You can now run '$APP_NAME configure'/'$APP_NAME c'."
 fi
