@@ -1,6 +1,6 @@
 module github.com/KillAllChickens/argus
 
-go 1.24
+go 1.25
 
 require (
 	github.com/Code-Hex/Neo-cowsay/v2 v2.0.4
