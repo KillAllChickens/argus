@@ -9,42 +9,40 @@
 
 </div>
 
-> _"The all-seeing one."_
+Argus Panoptes is an OSINT (Open Source Intelligence) tool designed to identify the digital footprint of a specific username across various websites.
 
-Named after the hundred-eyed giant of Greek mythology, Argus Panoptes is a powerful OSINT (Open Source Intelligence) tool designed to uncover the digital footprint of a specific username. Just as his mythological namesake served as a vigilant watchman, this tool scans the web to identify websites where a target username is registered.
-
-For better accuracy, Argus Panoptes can use Google Gemini to filter out false positives, making results as precise as possible.
+The tool can optionally use Google Gemini to filter false positives and improve the accuracy of the results.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 <details>
 <summary>Table of Contents</summary>
 
-  - [✨ Features](#-features)
-  - [🛠️ Installation](#-installation)
+  - [Features](#features)
+  - [Installation](#installation)
     - [Linux](#linux)
     - [Windows](#windows)
   - [Usage](#usage)
     - [Configuration](#configuration)
     - [Scanning](#scanning)
-  - [📝 Usernames](#-usernames)
+  - [Usernames](#usernames)
     - [Command-Line Usernames](#command-line-usernames)
     - [Username Files](#username-files)
-- [🚧 Planned Features](#-planned-features)
+- [Planned Features](#planned-features)
   - [Finished](#finished)
 
 </details>
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## ✨ Features
+## Features
 
-- 🚀 **Blazing Fast, Multi-threaded Scanning:** In testing, single username scans across **170+ sites** completed in under **5 seconds**.
+- **Multi-threaded Scanning:** In testing, single username scans across **170+ sites** completed in under **5 seconds**.
   - **Note:** Enabling AI-powered scanning will limit the thread count to **5** to prevent rate-limiting, which will result in a significant slowdown.
-- 🤖 **AI-Powered False Positive Detection:** Uses Google Gemini for more accurate identification of user profiles.
-- 🔧 **Highly Customizable:** Tailor the site list, user agents, soft 404 detection, and even the ASCII art to your preferences.
-- 📄 **Flexible Output Formats:** Export scan results in various formats, including PDF, HTML, JSON, and TXT.
+- **AI-Assisted False Positive Detection:** Uses Google Gemini for more accurate identification of user profiles.
+- **Highly Customizable:** Tailor the site list, user agents, soft 404 detection, and even the ASCII art to your preferences.
+- **Flexible Output Formats:** Export scan results in various formats, including PDF, HTML, JSON, and TXT.
 
-## 🛠️ Installation
+## Installation
 
 ### Linux
 
@@ -212,7 +210,7 @@ argus c
      --all                              Output as all supported types (default: false)
   ```
 
-## 📝 Usernames
+## Usernames
 
 ### Command-Line Usernames
 
@@ -243,13 +241,11 @@ user2 # This will also be ignored
 user3
 ```
 
-# 🚧 Planned Features
+# Planned Features
 
-We're constantly working to make Argus even more powerful and versatile! Here is a peek into what we have planned for future releases!
-
-- **Simple Site List Management:** We want to make it easier to customize the sites Argus scans. This includes commands to **add, remove, and update site configurations** directly, putting more control in your hands.
+- **Simple Site List Management:** Easier customization of the sites Argus scans, including commands to add, remove, and update site configurations directly.
 
 ## Finished
 
-- ~~**Proxy List Support:** Currently, you can use a single proxy. We're planning to add the ability to load a list of proxies and **rotate through them automatically** for enhanced anonymity and resilience against rate limits.~~
-- ~~**Deep Scan Mode:** Beyond just finding if a username exists, we aim to add a "deep scan" mode. This feature would attempt to **extract more public information** from found profiles (e.g., linked social media, "about me" sections, public post counts).~~
+- ~~**Proxy List Support:** Ability to load a list of proxies and rotate through them automatically for enhanced anonymity and resilience against rate limits.~~
+- ~~**Deep Scan Mode:** A mode to extract public information from found profiles (e.g., linked social media, "about me" sections, public post counts).~~
